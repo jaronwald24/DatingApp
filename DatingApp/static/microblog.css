@@ -1,0 +1,49 @@
+body {
+    background: #f2f3f5;
+}
+
+.pfp {
+	width: 30px;
+	height: 30px;
+	border-radius: 25px;
+    border: 2px solid black;
+    text-align: center;
+    align-items: center;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 12px;
+    padding: 1% 1%;
+    width: 95%;
+    margin: 2% 2%;
+}
+
+.metadata {
+    display: flex;
+    flex-direction: row;
+}
+
+.username {
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.time {
+    padding-left: 10px;
+}
+
+.profileContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.responseForm {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin: 1% 1%;
+}

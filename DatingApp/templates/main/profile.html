@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profileContainer">
+    <img src="{{ url_for('static', filename='pfp.png') }}" alt="profile" style="width: 20%; height: 20%; padding-top: 20px">
+    <h1 style="margin-bottom: 0px">{{user.name}}</h1>
+    <p style="margin-top: 0px">{{user.email}}</p>
+    {% if follow_button == "follow" %}
+    <form action="{{ url_for('main.follow', user_id=user.id) }}" method="post">
+        <input type="submit" value="Follow">
+    </form>
+    {% elif follow_button == "unfollow" %}
+        <form action="{{ url_for('main.unfollow', user_id=user.id) }}" method="post">
+            <input type="submit" value="Unfollow">
+        </form>
+    {% endif %}
+</div>
+<div>
+    <h2>Followers</h2>
+    {% for follower in user.followers%}
+        <a href="{{ url_for('main.profile', user_id=follower.id) }}">
+            <div>{{follower.name}}</div>
+        </a>
+    {% endfor %}
+<div>
+    <h2>Following</h2>
+    {% for follower in user.following%}
+        <a href="{{ url_for('main.profile', user_id=follower.id) }}">
+            <div>{{follower.name}}</div>
+        </a>
+    {% endfor %}
+<div>
+<section>
+    <h2>Recent Posts</h2>
+    {% include 'posts_template.html' %}
+</section>
+{% endblock %}

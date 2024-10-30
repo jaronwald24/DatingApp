@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <section>
+        <h2>Latest posts from the people you follow</h2>
+        {% set posts = following_posts %}
+        {% include 'posts_template.html' %}
+        
+        <h2>Latest posts</h2>
+        {% set posts = latest_posts %}
+        {% include 'posts_template.html' %}
+    </section>
+{% endblock %}
