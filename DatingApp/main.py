@@ -38,8 +38,6 @@ def index():
 def profile(user_id):
     curUser = flask_login.current_user
     user = db.session.get(model.User, user_id)
-    query = db.select(model.Post).where(model.Post.user_id == user_id).where(model.Post.response_to == None).order_by(model.Post.timestamp.desc())
-    posts = db.session.execute(query).scalars().all()
     
     if curUser.id == user.id:
         follow_button = None

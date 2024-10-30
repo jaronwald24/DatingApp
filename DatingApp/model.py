@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Optional
 
-from sqlalchemy import String, DateTime, ForeignKey, Integer
+from sqlalchemy import String, DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 import flask_login
@@ -20,6 +20,10 @@ class LikingAssociation(db.Model):
     liker_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     liked_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
 
+class BlockingAssociation(db.Model):
+    blocker_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    blocked_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    
 class Photo(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     profile: Mapped["Profile"] = relationship(back_populates="photo")
@@ -30,7 +34,7 @@ class User(flask_login.UserMixin, db.Model):
     email: Mapped[str] = mapped_column(String(128), unique=True)
     name: Mapped[str] = mapped_column(String(64))
     password: Mapped[str] = mapped_column(String(256))
-    
+    profile: Mapped["Profile"] = relationship(back_populates="user")
     liking: Mapped[List["User"]] = relationship(
         secondary=LikingAssociation.__table__,
         primaryjoin=LikingAssociation.liker_id == id,
@@ -41,8 +45,22 @@ class User(flask_login.UserMixin, db.Model):
     likers: Mapped[List["User"]] = relationship(
         secondary=LikingAssociation.__table__,
         primaryjoin=LikingAssociation.liked_id == id,
-        secondaryjoin=LikingAssociation.liker_ud == id,
+        secondaryjoin=LikingAssociation.liker_id == id,
         back_populates="liking",
+    )
+    
+    blocking: Mapped[List["User"]] = relationship(
+        secondary=BlockingAssociation.__table__,
+        primaryjoin=BlockingAssociation.blocker_id == id,
+        secondaryjoin=BlockingAssociation.blocked_id == id,
+        back_populates="blockers",
+    )
+    
+    blockers: Mapped[List["User"]] = relationship(
+        secondary=BlockingAssociation.__table__,
+        primaryjoin=BlockingAssociation.blocked_id == id,
+        secondaryjoin=BlockingAssociation.blocker_id == id,
+        back_populates="blocking",
     )
 
     sent_proposals: Mapped[List["DateProposal"]] = relationship(
@@ -55,10 +73,16 @@ class User(flask_login.UserMixin, db.Model):
 class Profile(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), unique=True)
-    bio: Mapped[Optional[str]] = mapped_column(String(256))
-    age: Mapped[Optional[int]] = mapped_column(Integer)
-    ageMiminum: Mapped[Optional[int]] = mapped_column(Integer)
-    ageMaximum: Mapped[Optional[int]] = mapped_column(Integer)
+    user: Mapped["User"] = relationship(
+        back_populates="profile",
+        single_parent=True,
+    )
+    bio: Mapped[Optional[str]] = mapped_column(Text)
+    birth_year: Mapped[Optional[int]] = mapped_column(Integer)
+    age_miminum: Mapped[Optional[int]] = mapped_column(Integer)
+    age_maximum: Mapped[Optional[int]] = mapped_column(Integer)
+    gender: Mapped[Optional[str]] = mapped_column(String(16))
+    genderPreference: Mapped[Optional[str]] = mapped_column(String(16))
     photo_id: Mapped[int] = mapped_column(ForeignKey("photo.id"))
     photo: Mapped[Optional["Photo"]] = relationship(back_populates="profile")
 
@@ -73,5 +97,6 @@ class DateProposal(db.Model):
     recipient: Mapped["User"] = relationship(
         foreign_keys=[recipient_id], back_populates="received_proposals"
     )
-    time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    created_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    response_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[ProposalStatus] = mapped_column(String(16))
