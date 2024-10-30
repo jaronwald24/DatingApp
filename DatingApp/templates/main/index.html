@@ -2,12 +2,9 @@
 
 {% block content %}
     <section>
-        <h2>Latest posts from the people you follow</h2>
-        {% set posts = following_posts %}
-        {% include 'posts_template.html' %}
-        
-        <h2>Latest posts</h2>
-        {% set posts = latest_posts %}
-        {% include 'posts_template.html' %}
+        <h1>Welcome to DatingApp!</h1>
+        <p>Here you can find your true love!</p>
+        <p>Or just have fun!</p>
+        `Hello, {{ current_user.name }}!`
     </section>
 {% endblock %}
