@@ -79,7 +79,7 @@ class Profile(db.Model):
     )
     bio: Mapped[Optional[str]] = mapped_column(Text)
     birth_year: Mapped[Optional[int]] = mapped_column(Integer)
-    age_miminum: Mapped[Optional[int]] = mapped_column(Integer)
+    age_minimum: Mapped[Optional[int]] = mapped_column(Integer)
     age_maximum: Mapped[Optional[int]] = mapped_column(Integer)
     gender: Mapped[Optional[str]] = mapped_column(String(16))
     genderPreference: Mapped[Optional[str]] = mapped_column(String(16))

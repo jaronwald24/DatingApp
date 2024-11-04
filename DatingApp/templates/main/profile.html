@@ -2,7 +2,13 @@
 
 {% block content %}
 <div class="profileContainer">
-    <img src="{{ url_for('static', filename='pfp.png') }}" alt="profile" style="width: 20%; height: 20%; padding-top: 20px">
+    <div class="pfp">
+        {% if user.profile.photo %}
+            <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" alt="Profile photo">
+        {% else %}
+            <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
+        {% endif %}
+    </div>
     <h1 style="margin-bottom: 0px">{{user.name}}</h1>
     <p style="margin-top: 0px">{{user.email}}</p>
     {% if like_button == "like" %}
@@ -14,8 +20,31 @@
             <input type="submit" value="Unlike">
         </form>
     {% endif %}
+    <div class="profileElements">
+        <div style="border: 1px solid black; padding: 0% 2%">
+            <h4>Gender:</h4>
+            <p>
+                {{user.profile.gender}}
+            </p>
+        </div>
+        <div style="border: 1px solid black; padding: 0% 2%">
+            <h4>Bio</h4>
+            <p>
+                {{user.profile.bio}}
+            </p>
+        </div>
+        <div style="border: 1px solid black; padding: 0% 2%">
+            <h4>Age:</h4>
+            <p>
+                {{ current_year - user.profile.birth_year }}
+            </p>
+        </div>
+    </div>
 </div>
 {% if user.id == current_user.id %}
+    <button>
+        <a href="{{ url_for('main.editProfile') }}">Edit profile</a>
+    </button>
     <div>
         <h2>People who liked you</h2>
         {% for liker in user.likers%}

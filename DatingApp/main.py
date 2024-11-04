@@ -1,11 +1,14 @@
-import datetime
+from datetime import datetime
 import dateutil.tz
 
-from flask import Blueprint, render_template, request, abort,redirect, url_for, flash
+from flask import Blueprint, render_template, request, abort,redirect, url_for, flash, current_app
 import flask_login
+import pathlib
 
 from . import db
 from . import model
+
+from .helperFunctions import photo_filename
 
 bp = Blueprint("main", __name__)
 
@@ -28,8 +31,10 @@ def profile(user_id):
         like_button = "unlike"
     else:
         like_button = "like"
+        
+    current_year = datetime.now().year
 
-    return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button)
+    return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button, current_year=current_year)
 
 @bp.route("/like/<int:user_id>", methods=["POST"])
 @flask_login.login_required
@@ -64,3 +69,96 @@ def unlike(user_id):
     db.session.commit()
     flash("You've unliked {}.".format(unlikee.name))
     return redirect(url_for("main.profile", user_id=user_id))
+
+@bp.route("/editProfile", methods=["GET"])
+@flask_login.login_required
+def editProfile():
+    return render_template("main/editProfile.html", user=flask_login.current_user)
+
+@bp.route("/editProfile", methods=["POST"])
+@flask_login.login_required
+def editProfilePost():
+    curUser = flask_login.current_user
+    
+    dbUser = db.session.get(model.User, curUser.id)
+    
+    if not dbUser:
+        abort(404, "User id {} doesn't exist.".format(curUser.id))
+        
+    dbUser.name = request.form.get("name") or curUser.name
+    
+    dbUser.profile.bio = request.form.get("bio") or dbUser.profile.bio
+    dbUser.profile.birth_year = request.form.get("birth_year") or dbUser.profile.birth_year
+    dbUser.profile.gender = request.form.get("gender") or dbUser.profile.gender
+    dbUser.profile.genderPreference = request.form.get("genderPreference") or dbUser.profile.genderPreference
+    dbUser.profile.age_minimum = int(request.form.get("age_minimum", dbUser.profile.age_minimum))
+    dbUser.profile.age_maximum = int(request.form.get("age_maximum", dbUser.profile.age_maximum))
+
+    # Handle uploaded photo
+    uploaded_file = request.files.get('photo_id')
+    if uploaded_file and uploaded_file.filename != '':
+
+        content_type = uploaded_file.content_type
+        if content_type == "image/png":
+            file_extension = "png"
+        elif content_type == "image/jpeg":
+            file_extension = "jpg"
+        else:
+            flash("Unsupported file type. Only JPEG and PNG are supported.")
+            return redirect(url_for("auth.signup"))
+            
+        new_photo = model.Photo(file_extension=file_extension)
+        db.session.add(new_photo)
+
+        old_photo = dbUser.profile.photo
+        if old_photo is not None:
+            path = photo_filename(old_photo)
+            path.unlink(missing_ok=True)
+            db.session.delete(old_photo)
+
+        dbUser.profile.photo = new_photo
+        new_path = photo_filename(new_photo)
+        uploaded_file.save(new_path)
+        
+    db.session.commit()
+
+    return redirect(url_for("main.profile", user_id=curUser.id))
+    
+    
+@bp.route('/upload_photo', methods=['POST'])
+@flask_login.login_required
+def upload_photo():
+    uploaded_file = request.files['photo']
+    if uploaded_file.filename != '':
+        content_type = uploaded_file.content_type
+        if content_type == "image/png":
+            file_extension = "png"
+        elif content_type == "image/jpeg":
+            file_extension = "jpg"
+        else:
+            abort(400, f"Unsupported file type {content_type}")
+        
+        photo = model.Photo(file_extension=file_extension)
+        db.session.add(photo)
+        
+        old_photo = flask_login.current_user.profile.photo
+        if old_photo is not None:
+            path = photo_filename(old_photo)
+            path.unlink(missing_ok=True)
+            db.session.delete(old_photo)
+
+        flask_login.current_user.profile.photo = photo
+        db.session.commit()
+
+        path = photo_filename(photo)
+        uploaded_file.save(path)
+
+        db.session.commit()
+        flash('Photo uploaded successfully!')
+        return redirect(url_for('main.profile', user_id=flask_login.current_user.id))
+
+    flash('No file selected')
+    return redirect(request.url)
+    
+    
+    

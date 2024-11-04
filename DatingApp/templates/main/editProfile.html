@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" action="/editProfile" enctype="multipart/form-data">
+    <div class="editProfileContainer">
+        <div class="pfp">
+            {% if user.profile.photo %}
+                <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" alt="Profile photo">
+            {% else %}
+                <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
+            {% endif %}
+        </div>
+        <div class="editProfileElement">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ user.name }}" required>
+        </div>
+        <div class="editProfileElement">
+            <label for="bio">Bio:</label>
+            <textarea id="bio" placeholder="Hi, my name is..." name="bio">{{ user.profile.bio }}</textarea>
+        </div>
+        <div class="editProfileElement">
+            <label for="birth_year">Birth Year:</label>
+            <input type="number" id="birth_year" name="birth_year" min="1924" max="2024" placeholder="e.g, 1990" value="{{ user.profile.birth_year }}" required>
+        </div>
+        <div class="editProfileElement">
+            <label for="age_minimum">Age Minimum:</label>
+            <input type="number" id="age_minimum" name="age_minimum" min="18" max="100" value="{{ user.profile.age_minimum }}" required>
+        </div>
+        <div class="editProfileElement">
+            <label for="age_maximum">Age Maximum:</label>
+            <input type="number" id="age_maximum" name="age_maximum" min="18" max="100" value="{{ user.profile.age_maximum }}" required>
+        </div>
+        <div class="editProfileElement">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male" {% if user.profile.gender == 'male' %}selected{% endif %}>Male</option>
+                <option value="female" {% if user.profile.gender == 'female' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+        <div class="editProfileElement">
+            <label for="genderPreference">Gender Preference:</label>
+            <select id="genderPreference" name="genderPreference" required>
+                <option value="male" {% if user.profile.genderPreference == 'male' %}selected{% endif %}>Male</option>
+                <option value="female" {% if user.profile.genderPreference == 'female' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+        <div class="editProfileElement">
+            <label for="photo_id">Profile Photo:</label>
+            <input type="file" id="photo_id" name="photo_id" accept="image/jpeg,image/png">
+        </div>
+        <button type="submit" class="btn btn-success mt-2">Save Changes</button>
+        <a href="{{ url_for('main.profile', user_id=current_user.id) }}" class="btn btn-outline-danger mt-2" role="button">Cancel</a>
+    </div>
+</form>
+
+{% endblock %}
