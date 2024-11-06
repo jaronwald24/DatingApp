@@ -37,7 +37,6 @@ def signup_post():
     password_hash = generate_password_hash(password)
     new_user = model.User(email=email, name=username, password=password_hash)
     db.session.add(new_user)
-    db.session.commit()
     
     # profile table
     bio = request.form.get("bio")
@@ -63,26 +62,25 @@ def signup_post():
 
         new_photo = model.Photo(file_extension=file_extension)
         db.session.add(new_photo)
-        db.session.commit()
-
-        filename = f"photo-{new_photo.id}.{file_extension}"
-        file_path = pathlib.Path(current_app.root_path) / "static" / "photos" / filename
-        uploaded_file.save(file_path)
             
     new_profile = model.Profile(
-        user_id=new_user.id,
+        user = new_user,    
         bio=bio,
         birth_year=birth_year,
         gender=gender,
         genderPreference=genderPreference,
         age_minimum=ageMinimum,
         age_maximum=ageMaximum,
-        photo_id=new_photo.id if uploaded_file else None
+        photo=new_photo if uploaded_file else None
     )
     
     db.session.add(new_profile)
     db.session.commit()
     
+    if uploaded_file:
+        new_path = photo_filename(new_photo)
+        uploaded_file.save(new_path)
+        
     flash("You've successfully signed up!")
     return redirect(url_for("main.index"))
 

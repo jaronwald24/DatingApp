@@ -95,7 +95,7 @@ def editProfilePost():
     dbUser.profile.age_maximum = int(request.form.get("age_maximum", dbUser.profile.age_maximum))
 
     # Handle uploaded photo
-    uploaded_file = request.files.get('photo_id')
+    uploaded_file = request.files['photo_id']
     if uploaded_file and uploaded_file.filename != '':
 
         content_type = uploaded_file.content_type
@@ -116,7 +116,7 @@ def editProfilePost():
             path.unlink(missing_ok=True)
             db.session.delete(old_photo)
 
-        dbUser.profile.photo = new_photo
+        flask_login.current_user.profile.photo = new_photo
         new_path = photo_filename(new_photo)
         uploaded_file.save(new_path)
         
@@ -153,7 +153,6 @@ def upload_photo():
         path = photo_filename(photo)
         uploaded_file.save(path)
 
-        db.session.commit()
         flash('Photo uploaded successfully!')
         return redirect(url_for('main.profile', user_id=flask_login.current_user.id))
 
