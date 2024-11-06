@@ -6,11 +6,19 @@
             <div class="notification">{{ message }}</div>
         {% endfor %}
     {% endwith %}
-    <h2>Log in</h2>
-    <form action="{{ url_for('auth.login') }}" method="post">
-        <div><label>Email: <input type="email" name="email" required/></label></div>
-        <div><label>Password: <input type="password" name="password" required/></label></div>
-        <div><input type="submit" value="Log In"/></div>
-        <div><a href="{{ url_for('auth.signup') }}">Sign Up</a></div>
-    </form>
+    <div class="editProfileContainer">
+        <h2>Log in</h2>
+        <form action="{{ url_for('auth.login') }}" method="post">
+            <div class="editProfileElement">
+                <label for="email">Username or Email:</label>
+                <input type="email" name="email" required/>
+            </div>
+            <div class="editProfileElement">
+                <label for="password">Password:</label>
+                <input type="password" name="password" required/>
+            </div>
+            <div><input class="btn btn-success mt-2" type="submit" value="Log In"/></div>
+            <div class="mt-2"> <a href="{{ url_for('auth.signup') }}">Don't have an account? Sign Up here.</a></div>
+        </form>
+    </div>
 {% endblock %}

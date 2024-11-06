@@ -9,7 +9,7 @@
             <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
         {% endif %}
     </div>
-    <h1 style="margin-bottom: 0px">{{user.name}}</h1>
+    <h1 style="margin-bottom: 0px">{{user.profile.fullname}}</h1>
     <p style="margin-top: 0px">{{user.email}}</p>
     {% if like_button == "like" %}
     <form action="{{ url_for('main.like', user_id=user.id) }}" method="post">

@@ -34,11 +34,19 @@ def signup_post():
     if user:
         flash("Sorry, the email you provided is already registered")
         return redirect(url_for("auth.signup"))
+    
+    query = db.select(model.User).where(model.User.username == username)
+    user = db.session.execute(query).scalar_one_or_none()
+    if user:
+        flash("Sorry, the username you provided is already registered")
+        return redirect(url_for("auth.signup"))
+    
     password_hash = generate_password_hash(password)
-    new_user = model.User(email=email, name=username, password=password_hash)
+    new_user = model.User(email=email, username=username, password=password_hash)
     db.session.add(new_user)
     
     # profile table
+    name = request.form.get("name")
     bio = request.form.get("bio")
     birth_year = int(request.form.get("birth_year"))
     gender = request.form.get("gender")
@@ -64,7 +72,8 @@ def signup_post():
         db.session.add(new_photo)
             
     new_profile = model.Profile(
-        user = new_user,    
+        user = new_user,
+        fullname=name,
         bio=bio,
         birth_year=birth_year,
         gender=gender,
@@ -92,11 +101,14 @@ def login():
 
 @bp.route("/login", methods=["POST"])
 def login_post():
-    email = request.form.get("email")
+    emailOrUsername = request.form.get("email")
     password = request.form.get("password")
     
-    query = db.select(model.User).where(model.User.email == email)
-    user = db.session.execute(query).scalar_one_or_none()
+    query = db.select(model.User).where(model.User.email == emailOrUsername)
+    query2 = db.select(model.User).where(model.User.username == emailOrUsername)
+    
+    user = db.session.execute(query).scalar_one_or_none() or db.session.execute(query2).scalar_one_or_none()
+    
     
     if user and check_password_hash(user.password, password):
         flask_login.login_user(user)
