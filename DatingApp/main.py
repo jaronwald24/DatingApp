@@ -160,5 +160,19 @@ def upload_photo():
     flash('No file selected')
     return redirect(request.url)
     
-    
-    
+@bp.route('/search', methods=['GET'])
+@flask_login.login_required
+def search():
+    curUser = flask_login.current_user
+    query = request.args.get("query", '').strip()
+
+    if query:
+        users = db.session.query(model.User).filter(
+            (model.User.fullname.ilike(f"%{query}%")) | (model.User.username.ilike(f"%{query}%"))
+        ).all()
+    else:
+        users = db.session.query(model.User).all()
+
+    current_year = datetime.now().year
+        
+    return render_template("main/index.html", user=curUser, users=users, current_year=current_year)
