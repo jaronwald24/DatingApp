@@ -83,7 +83,7 @@ class Profile(db.Model):
     age_maximum: Mapped[Optional[int]] = mapped_column(Integer)
     gender: Mapped[Optional[str]] = mapped_column(String(16))
     genderPreference: Mapped[Optional[str]] = mapped_column(String(16))
-    photo_id: Mapped[int] = mapped_column(ForeignKey("photo.id"))
+    photo_id: Mapped[Optional[int]] = mapped_column(ForeignKey("photo.id"))
     photo: Mapped[Optional["Photo"]] = relationship(back_populates="profile")
 
 
