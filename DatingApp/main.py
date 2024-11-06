@@ -85,7 +85,7 @@ def editProfilePost():
     if not dbUser:
         abort(404, "User id {} doesn't exist.".format(curUser.id))
         
-    dbUser.name = request.form.get("name") or curUser.name
+    dbUser.profile.fullname = request.form.get("name") or curUser.name
 
     dbUser.profile.bio = request.form.get("bio")
     print('bio', request.form.get("bio"))

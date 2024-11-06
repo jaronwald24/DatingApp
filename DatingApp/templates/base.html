@@ -15,7 +15,7 @@
                         <h3>Home Page</h3>
                     </a>
                     <a href="{{ url_for('main.profile', user_id=current_user.id)}}">
-                        <div>User: {{current_user.name}}</div>
+                        <div>User: {{current_user.username}}</div>
                     </a>
                     <a href="{{ url_for('auth.logout')}}">
                         <h3>Log out</h3>

@@ -32,7 +32,7 @@ class Photo(db.Model):
 class User(flask_login.UserMixin, db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(128), unique=True)
-    name: Mapped[str] = mapped_column(String(64))
+    username: Mapped[str] = mapped_column(String(64))
     password: Mapped[str] = mapped_column(String(256))
     profile: Mapped["Profile"] = relationship(back_populates="user")
     liking: Mapped[List["User"]] = relationship(
@@ -77,6 +77,7 @@ class Profile(db.Model):
         back_populates="profile",
         single_parent=True,
     )
+    fullname: Mapped[str] = mapped_column(String(128))
     bio: Mapped[Optional[str]] = mapped_column(Text)
     birth_year: Mapped[Optional[int]] = mapped_column(Integer)
     age_minimum: Mapped[Optional[int]] = mapped_column(Integer)
