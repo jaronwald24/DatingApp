@@ -49,14 +49,14 @@
         <h2>People who liked you</h2>
         {% for liker in user.likers%}
             <a href="{{ url_for('main.profile', user_id=liker.id) }}">
-                <div>{{liker.name}}</div>
+                <div>{{liker.username}}</div>
             </a>
         {% endfor %}
     <div>
         <h2>People you liked</h2>
         {% for liker in user.liking%}
             <a href="{{ url_for('main.profile', user_id=liker.id) }}">
-                <div>{{liker.name}}</div>
+                <div>{{liker.username}}</div>
             </a>
         {% endfor %}
     <div>

@@ -1,31 +1,82 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <section>
+    <section class="welcome-section">
         <h1>Welcome to DatingApp!</h1>
-        <p>Here you can find your true love!</p>
+        <h4>Here you can find your true love!</h4>
         <form action = "{{url_for('main.search')}}" method = "get">
             <div class = "searchContainer">
-                <input type="text" name="search" placeholder="Search for users...">
+                <input type="text" name="name" placeholder="Search for users...">
+                <label for="gender">Age Miniumum</label>
+                <input type="number" name="age_minimum" placeholder="Min age" value="{{ user.profile.age_minimum }}" min="18" max="100">
+                <label for="gender">Age Maximum</label>
+                <input type="number" name="age_maximum" placeholder="Max age" value="{{ user.profile.age_maximum }}" min="18" max="100">
+                <label for="gender">Their Gender</label>
+                <select name="gender">
+                    <option value="male" {% if user.profile.genderPreference == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if user.profile.genderPreference == 'female' %}selected{% endif %}>Female</option>
+                </select>
+                <label for="genderPreference">Their Gender Preference</label>
+                <select name="genderPreference">
+                    <option value="male" {% if user.profile.gender == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if user.profile.gender == 'female' %}selected{% endif %}>Female</option>
+                </select>
                 <button type="submit">Search</button>
             </div>
         </form>
+        <hr style="border: 2px solid ; color:#ff69b4; width: 100%">
 
-        {% if users %}
+        {% if searchUsers %}
+            <div class = "listUsers">
+                <br>
+                <h2> Search Results </h2>
+                <ul>
+                    {% for user in searchUsers %}
+                        <li>
+                            <h2><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h2>
+                            <p>Age: {{ current_year - user.profile.birth_year }}</p>
+                            <p>{{ user.profile.bio }}</p>
+                            <div class = "pfp">
+                            {% if user.profile.photo %}
+                                <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" alt="Profile photo" >
+                            {% else %}
+                                <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
+                            {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <hr style="border: 2px solid ; color:#ff69b4; width: 100%;">            
+        {% else %}
+        {% endif %}
+
+        
+
+        {% if defaultUsers %}
+        <div class = "listUsers">
+            </br>
+            <h2>Users you may like</h2>
             <ul>
-                {% for user in users %}
+                {% for user in defaultUsers %}
                     <li>
-                        <h2>{{ user.profile.name }}</h2>
+                        <h2><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h2>
                         <p>Age: {{ current_year - user.profile.birth_year }}</p>
-                        <p>{{ user.profile.description }}</p>
+                        <p>{{ user.profile.bio }}</p>
+                        <div class = "pfp">
+                        {% if user.profile.photo %}
+                            <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" alt="Profile photo" >
+                        {% else %}
+                            <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
+                        {% endif %}
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
-        {% else %}
-            <p>No profiles found matching your search.</p>
-        {% endif %}
+        </div>
+    {% else %}
+    {% endif %}
 
 
-        `Hello, {{ current_user.name }}!`
     </section>
 {% endblock %}
