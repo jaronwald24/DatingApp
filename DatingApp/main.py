@@ -4,6 +4,7 @@ import dateutil.tz
 from flask import Blueprint, render_template, request, abort,redirect, url_for, flash, current_app
 import flask_login
 import pathlib
+from sqlalchemy.orm import joinedload
 
 from . import db
 from . import model
@@ -16,7 +17,23 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 @flask_login.login_required
 def index():
-    return render_template("main/index.html", user=flask_login.current_user)
+    curUser = flask_login.current_user
+    current_year = datetime.now().year
+    age_min = current_year - curUser.profile.age_maximum
+    age_max = current_year - curUser.profile.age_minimum
+    gender_pref = curUser.profile.genderPreference
+
+    defaultUsers = db.session.query(model.User).join(model.Profile).filter(
+        model.User.id != curUser.id,
+        model.Profile.birth_year.between(age_min, age_max),
+        model.Profile.gender == gender_pref,
+        model.Profile.genderPreference == curUser.profile.gender
+    ).limit(10).all()
+
+
+
+
+    return render_template("main/index.html", user=curUser, defaultUsers = defaultUsers, current_year=current_year)
 
 
 @bp.route("/profile/<int:user_id>")
@@ -160,5 +177,51 @@ def upload_photo():
     flash('No file selected')
     return redirect(request.url)
     
-    
-    
+@bp.route('/search', methods=['GET'])
+@flask_login.login_required
+def search():
+    curUser = flask_login.current_user
+    nameQuery = request.args.get("name", '').strip()
+    age_minimum = request.args.get("age_minimum", type=int)
+    age_maximum = request.args.get("age_maximum", type=int)
+    gender = request.args.get("gender", '').strip()
+    gender_pref = request.args.get("genderPreference", '').strip()
+    users = []
+
+    if nameQuery or age_minimum or age_maximum or gender or gender_pref:
+        query = db.session.query(model.User).join(model.Profile).options(
+            joinedload(model.User.profile)
+        ).filter(model.User.id != curUser.id)  # Exclude the current user
+
+        if nameQuery:
+            query = query.filter(
+                db.or_(
+                    model.Profile.fullname.ilike(f"%{nameQuery}%"),
+                    model.User.username.ilike(f"%{nameQuery}%")
+                )
+            )
+        if age_minimum:
+            query = query.filter(model.Profile.birth_year <= datetime.now().year - age_minimum)
+        if age_maximum:
+            query = query.filter(model.Profile.birth_year >= datetime.now().year - age_maximum)
+        if gender:
+            query = query.filter(model.Profile.gender == gender)
+        if gender_pref:
+            query = query.filter(model.Profile.genderPreference == gender_pref)
+
+        users = query.all()
+
+    current_year = datetime.now().year
+
+    age_min = current_year - curUser.profile.age_maximum
+    age_max = current_year - curUser.profile.age_minimum
+    gender_pref = curUser.profile.genderPreference
+
+    defaultUsers = db.session.query(model.User).join(model.Profile).filter(
+        model.User.id != curUser.id,
+        model.Profile.birth_year.between(age_min, age_max),
+        model.Profile.gender == gender_pref,
+        model.Profile.genderPreference == curUser.profile.gender
+    ).limit(10).all()
+        
+    return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year)
