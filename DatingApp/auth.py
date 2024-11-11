@@ -4,7 +4,7 @@ from werkzeug.security import check_password_hash
 import flask_login
 
 import pathlib
-from .helperFunctions import photo_filename
+from utilities.helperFunctions import photo_filename
 from . import db
 from . import model
 

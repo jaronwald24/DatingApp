@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload
 from . import db
 from . import model
 
-from .helperFunctions import photo_filename
+from utilities.helperFunctions import photo_filename
 
 bp = Blueprint("main", __name__)
 
@@ -102,7 +102,7 @@ def editProfilePost():
     if not dbUser:
         abort(404, "User id {} doesn't exist.".format(curUser.id))
         
-    dbUser.profile.fullname = request.form.get("name") or curUser.username
+    dbUser.profile.fullname = request.form.get("name") or dbUser.profile.fullname
 
     dbUser.profile.bio = request.form.get("bio")
     print('bio', request.form.get("bio"))
