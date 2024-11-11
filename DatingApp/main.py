@@ -8,7 +8,7 @@ import pathlib
 from . import db
 from . import model
 
-from .helperFunctions import photo_filename
+from utilities.helperFunctions import photo_filename
 
 bp = Blueprint("main", __name__)
 
@@ -50,7 +50,7 @@ def like(user_id):
         
     flask_login.current_user.liking.append(likee)
     db.session.commit()
-    flash("You're now liking {}.".format(likee.name))
+    flash("You're now liking {}.".format(likee.username))
     return redirect(url_for("main.profile", user_id=user_id))
 
 @bp.route("/unlike/<int:user_id>", methods=["POST"])
@@ -67,7 +67,7 @@ def unlike(user_id):
     
     flask_login.current_user.liking.remove(unlikee)
     db.session.commit()
-    flash("You've unliked {}.".format(unlikee.name))
+    flash("You've unliked {}.".format(unlikee.username))
     return redirect(url_for("main.profile", user_id=user_id))
 
 @bp.route("/editProfile", methods=["GET"])
@@ -85,7 +85,7 @@ def editProfilePost():
     if not dbUser:
         abort(404, "User id {} doesn't exist.".format(curUser.id))
         
-    dbUser.profile.fullname = request.form.get("name") or curUser.name
+    dbUser.profile.fullname = request.form.get("name") or dbUser.profile.fullname
 
     dbUser.profile.bio = request.form.get("bio")
     print('bio', request.form.get("bio"))
