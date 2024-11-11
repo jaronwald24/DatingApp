@@ -11,15 +11,26 @@
     </div>
     <h1 style="margin-bottom: 0px">{{user.profile.fullname}}</h1>
     <p style="margin-top: 0px">{{user.email}}</p>
-    {% if like_button == "like" %}
-    <form action="{{ url_for('main.like', user_id=user.id) }}" method="post">
-        <input type="submit" value="Like">
-    </form>
-    {% elif like_button == "unlike" %}
-        <form action="{{ url_for('main.unlike', user_id=user.id) }}" method="post">
-            <input type="submit" value="Unlike">
+    <div style="display: flex; flex-direction: row">
+        {% if like_button == "like" %}
+        <form action="{{ url_for('main.like', user_id=user.id) }}" method="post">
+            <input type="submit" value="Like">
         </form>
-    {% endif %}
+        {% elif like_button == "unlike" %}
+            <form action="{{ url_for('main.unlike', user_id=user.id) }}" method="post">
+                <input type="submit" value="Unlike">
+            </form>
+        {% endif %}
+        {% if block_button == "block" %}
+        <form action="{{ url_for('main.block', user_id=user.id) }}" method="post">
+            <input type="submit" value="Block">
+        </form>
+        {% elif block_button == "unblock" %}
+            <form action="{{ url_for('main.unblock', user_id=user.id) }}" method="post">
+                <input type="submit" value="Unblock">
+            </form>
+        {% endif %}
+    </div>
     <div class="profileElements">
         <div style="border: 1px solid black; padding: 0% 2%">
             <h4>Gender:</h4>
