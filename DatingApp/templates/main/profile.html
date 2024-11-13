@@ -35,24 +35,34 @@
     <div class="profileElements">
         <div>
             <div style="display: flex; flex-direction: column">
-                <h4 style="margin-bottom: 0">
-                    {{user.profile.gender}}
+                <h4 style="margin-bottom: 0; text-align: center">
+                    {%if user.profile.gender== "male" %} Male
+                    {%else%} Female
+                    {%endif%}
                 </h4>
                 <p>Gender</p>
             </div>
         </div>
         <div>
-            <h4 style="margin-bottom: 0">{{user.profile.bio}}</h4>
+            <h4 style="margin-bottom: 0; text-align: center">
+                {%if user.profile.genderPreference== "male" %} Male
+                    {%else%} Female
+                    {%endif%}
+            </h4>
             <p>
-                Bio
+                Gender Preference
             </p>
         </div>
         <div>
-            <h4 style="margin-bottom: 0">{{ current_year - user.profile.birth_year }}</h4>
+            <h4 style="margin-bottom: 0; text-align: center">{{ current_year - user.profile.birth_year }}</h4>
             <p>
                 Age
             </p>
         </div>
+    </div>
+    <div style="display: flex; flex-direction: column; width: 75%">
+        <h4 style="margin-bottom: 0; word-break: break-word; text-align: center">{{user.profile.bio}}</h4>
+        <p style="text-align: center">Bio</p>
     </div>
     <hr style="border: 1px solid black; width: 75%;">
 </div>
@@ -142,6 +152,7 @@
         {% for proposal in sent_proposals %}
             <div class="proposal">
                 <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                <p>Message: {{proposal.message}}</p>
                 <p>Status: 
                 {% if proposal.status == '0' %}
                     Proposed
