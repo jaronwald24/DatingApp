@@ -2,10 +2,11 @@
 
 {% block content %}
     <section class="welcome-section">
-        <h1>Welcome to DatingApp!</h1>
-        <h4>Here you can find your true love!</h4>
+        <h1>Welcome to Amora!</h1>
+        <h4>Search for your true love!</h4>
         <form action = "{{url_for('main.search')}}" method = "get">
             <div class = "searchContainer">
+                <label for="name">Name or Username</label>
                 <input type="text" name="name" placeholder="Search for users...">
                 <label for="gender">Age Miniumum</label>
                 <input type="number" name="age_minimum" placeholder="Min age" value="{{ user.profile.age_minimum }}" min="18" max="100">
@@ -25,56 +26,52 @@
             </div>
         </form>
         <hr style="border: 2px solid ; color:#ff69b4; width: 100%">
-
         {% if searchUsers %}
-            <div class = "listUsers">
-                <br>
-                <h2> Search Results </h2>
-                <ul>
-                    {% for user in searchUsers %}
-                        <li>
-                            <h2><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h2>
-                            <p>Age: {{ current_year - user.profile.birth_year }}</p>
-                            <p>{{ user.profile.bio }}</p>
-                            <div class = "pfp">
-                            {% if user.profile.photo %}
-                                <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" alt="Profile photo" >
-                            {% else %}
-                                <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
-                            {% endif %}
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <hr style="border: 2px solid ; color:#ff69b4; width: 100%;">            
+        <div class="listUsers">
+            <br>
+            <h2>Search Results</h2>
+            {% for user in searchUsers %}
+                <div class="userRow">
+                    {% if user.profile.photo %}
+                        <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" class="pfpSmall" alt="Profile photo" style="margin-right: 15px;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" class="pfpSmall" alt="Default profile photo" style="margin-right: 15px;">
+                    {% endif %}
+                    <div style="display: flex; flex-direction: column;">
+                        <h5 style="margin: 0;"><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h5>
+                        <p style="margin: 0;">Age: {{ current_year - user.profile.birth_year }}</p>
+                    </div>
+                </div>
+                <p style="margin-left: 15px;">{{ user.profile.bio }}</p>
+                <hr style="border: 0.5px solid; color: grey; width: 100%;">
+            {% endfor %}
+        </div>
         {% else %}
-        {% endif %}
+            {% endif %}
 
         
 
-        {% if defaultUsers %}
-        <div class = "listUsers">
-            </br>
-            <h2>Users you may like</h2>
-            <ul>
+            {% if defaultUsers %}
+            <div class="listUsers">
+                <br>
+                <h2>Users you may like</h2>
                 {% for user in defaultUsers %}
-                    <li>
-                        <h2><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h2>
-                        <p>Age: {{ current_year - user.profile.birth_year }}</p>
-                        <p>{{ user.profile.bio }}</p>
-                        <div class = "pfp">
+                    <div class="userRow">
                         {% if user.profile.photo %}
-                            <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" alt="Profile photo" >
+                            <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" class="pfpSmall" alt="Profile photo" style="margin-right: 15px;">
                         {% else %}
-                            <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo">
+                            <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" class="pfpSmall" alt="Default profile photo" style="margin-right: 15px;">
                         {% endif %}
+                        <div style="display: flex; flex-direction: column;">
+                            <h5 style="margin: 0;"><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h5>
+                            <p style="margin: 0;">Age: {{ current_year - user.profile.birth_year }}</p>
                         </div>
-                    </li>
+                    </div>
+                    <p style="margin-left: 15px;">{{ user.profile.bio }}</p>
+                    <hr style="border: 0.5px solid; color: grey; width: 100%;">
                 {% endfor %}
-            </ul>
-        </div>
-    {% else %}
+            </div>
+        {% else %}
     {% endif %}
 
 
