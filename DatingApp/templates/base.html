@@ -9,19 +9,27 @@
     </head>
     <body>
         <header>
-            <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                {% if current_user.is_authenticated: %}
-                    <a href="{{ url_for('main.index')}}">
-                        <h3>Home Page</h3>
-                    </a>
-                    <a href="{{ url_for('main.profile', user_id=current_user.id)}}">
-                        <div>User: {{current_user.username}}</div>
-                    </a>
-                    <a href="{{ url_for('auth.logout')}}">
-                        <h3>Log out</h3>
-                    </a>
-                {% endif %}
+            {% if current_user.is_authenticated: %}
+            <div class="appHeader">
+                    <button type="button" onclick="window.location.href='{{ url_for('main.index') }}'" style="background: none; border: none; padding: 0; font-size: inherit; cursor: pointer;">
+                        <h3>Amora</h3>
+                    </button>
+                    <div style="display: flex">
+                        <a href="{{ url_for('main.profile', user_id=current_user.id)}}">
+                            <div class="me-2">
+                                {% if current_user.profile.photo %}
+                                    <img src="{{ url_for('static', filename='photos/photo-' ~ current_user.profile.photo.id ~ '.' ~ current_user.profile.photo.file_extension) }}" alt="Profile photo" class="pfpSmall">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" alt="Default profile photo" class="pfpSmall">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <button class="btn btn-outline-dark ms-2" type="button" onclick="window.location.href='{{ url_for('auth.logout') }}'">
+                            <h5>Log out</h5>
+                        </button>
+                    </div>
             </div>
+            {% endif %}
         </header>
         <section class="content">
             {% block content %}{% endblock %}

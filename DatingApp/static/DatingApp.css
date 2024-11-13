@@ -2,6 +2,16 @@ body {
     background: #f2f3f5;
 }
 
+.appHeader {
+    display: flex; 
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: center; 
+    background-color: #ff69b4;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+    padding: 0.5% 1.5%;
+}
+
 
 .post {
     display: flex;
@@ -31,6 +41,7 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
+    margin-top: 5%;
 }
 
 .responseForm {
@@ -72,6 +83,8 @@ body {
 .profileElements {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    width: 30%;
     margin: 1% 1%;
 }
 
@@ -90,6 +103,12 @@ body {
     height: 100%; 
     object-fit: cover; 
     border: 2px solid #000;
+}
+
+.pfpSmall {
+    width: 50px; 
+    height: 50px;
+    border-radius: 50%;
 }
 
 .welcome-section h1 {
@@ -169,9 +188,21 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
-
+.listUsers {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5% 1.5%;
+}
 .listUsers h2 {
     color: #ff69b4;
+}
+
+.userRow {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5% 1.5%;
+    align-items: center; 
+    margin-bottom: 15px;
 }
 
 .modal {

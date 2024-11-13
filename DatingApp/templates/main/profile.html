@@ -31,26 +31,30 @@
             </form>
         {% endif %}
     </div>
+    <hr style="border: 1px solid; color: black; width: 75%;">
     <div class="profileElements">
-        <div style="border: 1px solid black; padding: 0% 2%">
-            <h4>Gender:</h4>
+        <div>
+            <div style="display: flex; flex-direction: column">
+                <h4 style="margin-bottom: 0">
+                    {{user.profile.gender}}
+                </h4>
+                <p>Gender</p>
+            </div>
+        </div>
+        <div>
+            <h4 style="margin-bottom: 0">{{user.profile.bio}}</h4>
             <p>
-                {{user.profile.gender}}
+                Bio
             </p>
         </div>
-        <div style="border: 1px solid black; padding: 0% 2%">
-            <h4>Bio</h4>
+        <div>
+            <h4 style="margin-bottom: 0">{{ current_year - user.profile.birth_year }}</h4>
             <p>
-                {{user.profile.bio}}
-            </p>
-        </div>
-        <div style="border: 1px solid black; padding: 0% 2%">
-            <h4>Age:</h4>
-            <p>
-                {{ current_year - user.profile.birth_year }}
+                Age
             </p>
         </div>
     </div>
+    <hr style="border: 1px solid black; width: 75%;">
 </div>
 {% if user.id == current_user.id %}
     <a href="{{ url_for('main.editProfile') }}" class="button">Edit profile</a>
