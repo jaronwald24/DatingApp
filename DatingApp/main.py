@@ -23,10 +23,14 @@ def index():
     age_min = current_year - curUser.profile.age_maximum
     age_max = current_year - curUser.profile.age_minimum
     gender_pref = curUser.profile.genderPreference
+    
+    blocked_users = [blocked_user.id for blocked_user in curUser.blocking]     
+
 
     defaultUsers = db.session.query(model.User).join(model.Profile).filter(
         model.User.id != curUser.id,
         model.Profile.birth_year.between(age_min, age_max),
+        model.User.id.notin_(blocked_users),
         model.Profile.gender == gender_pref,
         model.Profile.genderPreference == curUser.profile.gender
     ).limit(10).all()
@@ -50,6 +54,14 @@ def profile(user_id):
     else:
         like_button = "like"
         
+    if curUser.id == user.id:
+        block_button = None
+    elif user in curUser.blocking:
+        block_button = "unblock"
+    else:
+        block_button = "block"
+        
+        
     received_proposals = (
         DateProposal.query.filter_by(recipient_id=user.id, status=model.ProposalStatus.proposed.value).all()
         if curUser.id == user.id else []
@@ -66,7 +78,7 @@ def profile(user_id):
 
     current_year = datetime.now().year
 
-    return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button,
+    return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button, block_button=block_button,
                            current_year=current_year, received_proposals=received_proposals,
                            sent_proposals=sent_proposals, set_dates=set_dates)
 
@@ -226,6 +238,9 @@ def search():
         if gender_pref:
             query = query.filter(model.Profile.genderPreference == gender_pref)
 
+        blocked_users = [blocked_user.id for blocked_user in curUser.blocking]
+        query = query.filter(model.User.id.notin_(blocked_users))        
+        
         users = query.all()
 
     current_year = datetime.now().year
@@ -233,9 +248,12 @@ def search():
     age_min = current_year - curUser.profile.age_maximum
     age_max = current_year - curUser.profile.age_minimum
     gender_pref = curUser.profile.genderPreference
+    blocked_users = [blocked_user.id for blocked_user in curUser.blocking]
+
 
     defaultUsers = db.session.query(model.User).join(model.Profile).filter(
         model.User.id != curUser.id,
+        model.User.id.notin_(blocked_users),
         model.Profile.birth_year.between(age_min, age_max),
         model.Profile.gender == gender_pref,
         model.Profile.genderPreference == curUser.profile.gender
@@ -320,3 +338,41 @@ def respond_proposal(proposal_id):
     
     db.session.commit()
     return redirect(url_for('main.profile', user_id=curUser.id))
+
+@bp.route("/block/<int:user_id>", methods=["POST"])
+@flask_login.login_required
+def block(user_id):
+    blockee = db.session.get(model.User, user_id)
+    if not blockee:
+        abort(404, "User id {} doesn't exist.".format(user_id))
+    
+    if flask_login.current_user == blockee:
+        abort(403, "You can't block yourself.")
+    if blockee in flask_login.current_user.blocking:
+        abort(403, "You have already blocked this user.")
+        
+    flask_login.current_user.blocking.append(blockee)
+    
+    if blockee in flask_login.current_user.liking:
+        flask_login.current_user.liking.remove(blockee)
+    
+    db.session.commit()
+    flash("You're now blocking {}.".format(blockee.username))
+    return redirect(url_for("main.profile", user_id=user_id))
+
+@bp.route("/unblock/<int:user_id>", methods=["POST"])
+@flask_login.login_required
+def unblock(user_id):
+    unblockee = db.session.get(model.User, user_id)
+    if not unblockee:
+        abort(404, "User id {} doesn't exist.".format(user_id))
+    
+    if flask_login.current_user == unblockee:
+        abort(403, "You can't unblock yourself.")
+    if unblockee not in flask_login.current_user.blocking:
+        abort(403, "You're not blocking this user.")
+    
+    flask_login.current_user.blocking.remove(unblockee)
+    db.session.commit()
+    flash("You've unblocked {}.".format(unblockee.username))
+    return redirect(url_for("main.profile", user_id=user_id))

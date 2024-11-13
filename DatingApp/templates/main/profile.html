@@ -56,6 +56,18 @@
     </div>
     <hr style="border: 1px solid black; width: 75%;">
 </div>
+{% if curUser.id != user.id %}
+<div class="propose-date">
+    <h3>Propose a Date</h3>
+    <form action="{{ url_for('main.propose_date', recipient_id=user.id) }}" method="post">
+        <label for="proposed_day">Select a date:</label>
+        <input type="date" id="proposed_day" name="proposed_day" required>
+        <label for="optional_message">Optional message:</label>
+        <textarea id="optional_message" name="optional_message"></textarea>
+        <button type="submit">Propose Date</button>
+    </form>
+</div>
+{% endif %}
 {% if user.id == current_user.id %}
     <a href="{{ url_for('main.editProfile') }}" class="button">Edit profile</a>
     <button id="blockedBtn">Blocked Users</button>
