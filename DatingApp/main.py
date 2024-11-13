@@ -296,7 +296,7 @@ def propose_date(recipient_id):
                 created_time=datetime.now(),
                 proposed_day=proposed_day,
                 status=setStatus,  # Enum value as integer
-                message=optional_message
+                proposingMessage=optional_message
             )
             db.session.add(proposal)
             db.session.commit()
@@ -335,6 +335,9 @@ def respond_proposal(proposal_id):
     else:
         flash("Invalid action.")
         return redirect(url_for('main.profile', user_id=curUser.id))
+    
+    message = request.form.get('optional_message')
+    proposal.replyMessage = message
     
     db.session.commit()
     return redirect(url_for('main.profile', user_id=curUser.id))
