@@ -36,7 +36,7 @@
             </div>
             <div class="createProfileElement">
                 <label for="birth_year">Birth Year:</label>
-                <input type="number" id="birth_year" name="birth_year" min="1924" max="2024" placeholder="e.g, 1990" required>
+                <input type="number" id="birth_year" name="birth_year" min="1924" max="2024" required>
             </div>
             <div class="createProfileElement">
                 <label for="age_minimum">Age Minimum:</label>
@@ -61,14 +61,14 @@
                 </select>
             </div>
             <div class="createProfileElement">
-                <label for="photo_id">Profile Photo:</label>
+                <label class = "custom-file-label" for="photo_id"> Choose your profile photo </label>
                 <input type="file" id="photo_id" name="photo_id" accept="image/jpeg,image/png">
             </div>
-            <div><input class="btn btn-success mt-2" type="submit" style="background-color: #ff69b4; border: none; width: 100%" value="Sign Up"/></div>
-            <div><a href="{{ url_for('auth.login') }}">Already have an account? Log in here!</a>
-        </form>
-        <div>
-            <img src="{{ url_for('static', filename='hl.webp') }}" alt="heart" style="width: 100px; height: 100px; margin-top: 20px;">
+            <div class="createProfileElement">
+                <input class="btn btn-success mt-2" type="submit" value="Sign Up"/>
+                <a href="{{ url_for('auth.login') }}" >Already have an account? Log in here!</a>
+            </div>
+            
         </div>
     </div>
     

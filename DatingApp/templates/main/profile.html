@@ -90,6 +90,7 @@
     </form>
 </div>
 {% endif %}
+
 {% if user.id == current_user.id %}
     <div id="blockedModal" class="blockedModal">
         <div class="modalContent">
@@ -175,64 +176,90 @@
             </div>
         </div>
     </div>
-{% endif %}
 
-{% if user.id == current_user.id and set_dates %}
-    <div class = "set-dates">
-    <h3> Set Dates</h3>
-    {% for date in set_dates %}
-        <div class="proposal">
-            {% if date.proposer.id == current_user.id %}
-                <p>Set a date with {{ date.recipient.username }} for {{ date.proposed_day.strftime('%Y-%m-%d') }}</p>
-            {% else %}
-                <p>{{ date.proposer.username }} set a date with you for {{ date.proposed_day.strftime('%Y-%m-%d')}}</p>
-            {% endif %}
+    <!-- All Proposal Stuff Section-->
+    <div class = "proposal-wrapper">
+
+        <!-- Set Dates section-->
+        <div class = "proposal-section">
+            <h3> Set Dates</h3>
+            {% for date in set_dates %}
+                <div class="proposal">
+                    {% if date.proposer.id == current_user.id %}
+                        <p>Set a date with {{ date.recipient.username }} for {{ date.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>They replied: {{date.replyMessage}}</p>
+                    {% else %}
+                        <p>{{ date.proposer.username }} set a date with you for {{ date.proposed_day.strftime('%Y-%m-%d')}}</p>
+                        <p>Your reply: {{date.replyMessage}}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-    </div>
-{% endif %}
 
-{% if user.id == current_user.id and received_proposals %}
-    <div class = "received-proposals">
-        <h3>Received Date Proposals</h3>
-        {% for proposal in received_proposals %}
-            <div class="proposal">
-                <p>{{ proposal.proposer.username }} proposed a date for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
-                <p>Message: {{proposal.message}}</p>
-                <form action="{{ url_for('main.respond_proposal', proposal_id=proposal.id) }}" method="post">
-                    <button type="submit" name="action" value="accept">Accept</button>
-                    <button type="submit" name="action" value="reject">Reject</button>
-                    <button type="submit" name="action" value="ignore">Ignore</button>
-                    <button type="submit" name="action" value="reschedule">Request Reschedule</button>
-                </form>
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
+        <!-- Received Proposals Section-->
+        <div class = "proposal-section">
+            <h3>Received Date Proposals</h3>
+            {% if not received_proposals %}
+                <p style="font-size: 3em; color: red; text-align: center; font-weight: bold; text-shadow: 2px 2px 4px #000000;">No proposals received</p>
+                <p style="font-size: .8em; color: red; text-align: center; font-weight: bold; text-shadow: 2px 2px 8px #000000;">Loser</p>
+            {% endif %}
+            {% for proposal in received_proposals %}
+                <div class="proposal">
+                    <p>{{ proposal.proposer.username }} proposed a date for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                    <p>Message: {{proposal.proposingMessage}}</p>
+                    <form action="{{ url_for('main.respond_proposal', proposal_id=proposal.id) }}" method="post">
+                        <div id = "response-wrapper">
+                            <div id = "optional_message">
+                                <label for="optional_message">Optional message:</label>
+                                <textarea id="optional_message" name="optional_message"></textarea>
+                            </div>
+                            <div id = "response-buttons">
+                                <button type="submit" name="action" value="accept">Accept</button>
+                                <button type="submit" name="action" value="reject">Reject</button>
+                                <button type="submit" name="action" value="ignore">Ignore</button>
+                                <button type="submit" name="action" value="reschedule">Request Reschedule</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
 
-<!-- Display Sent Proposals (for any user) -->
-{% if user.id == current_user.id and sent_proposals %}
-    <div class = "sent-proposals">
-        <h3>Sent Date Proposals</h3>
-        {% for proposal in sent_proposals %}
-            <div class="proposal">
-                <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
-                <p>Message: {{proposal.message}}</p>
-                <p>Status: 
+        <!-- Sent Proposals Section-->
+        <div class="proposal-section">
+            <h3>Proposals</h3>
+            {% for proposal in sent_proposals %}
                 {% if proposal.status == '0' %}
-                    Proposed
-                {% elif proposal.status == '1' %}
-                    Accepted
-                {% elif proposal.status == '2' %}
-                    Rejected
-                {% elif proposal.status == '3' %}
-                    Proposed
-                {% elif proposal.status == '4' %}
-                    Reschedule Requested
+                    <div class="proposal">
+                        <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>Message: {{proposal.proposingMessage}}</p>
+                        <p>Status: Proposed</p>
+                    </div>
                 {% endif %}
-                </p>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Replied Proposals Section-->
+        <div class="proposal-section">
+            <h3>Replied</h3>
+            {% for proposal in sent_proposals %}
+                {% if proposal.status != '0'  and proposal.status != '1'%}
+                    <div class="proposal">
+                        <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>Message: {{proposal.replyMessage}}</p>
+                        <p>Status: 
+                        {% if proposal.status == '2' %}
+                            Rejected
+                        {% elif proposal.status == '3' %}
+                            Proposed
+                        {% elif proposal.status == '4' %}
+                            Reschedule Requested
+                        {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 {% endif %}
 

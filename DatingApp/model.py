@@ -102,4 +102,5 @@ class DateProposal(db.Model):
     response_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     proposed_day: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[ProposalStatus] = mapped_column(String(16))
-    message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    proposingMessage: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    replyMessage: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
