@@ -99,5 +99,7 @@ class DateProposal(db.Model):
         foreign_keys=[recipient_id], back_populates="received_proposals"
     )
     created_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
-    response_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    response_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    proposed_day: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     status: Mapped[ProposalStatus] = mapped_column(String(16))
+    message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

@@ -8,6 +8,7 @@ from sqlalchemy.orm import joinedload
 
 from . import db
 from . import model
+from .model import DateProposal
 
 from utilities.helperFunctions import photo_filename
 
@@ -49,9 +50,25 @@ def profile(user_id):
     else:
         like_button = "like"
         
+    received_proposals = (
+        DateProposal.query.filter_by(recipient_id=user.id, status=model.ProposalStatus.proposed.value).all()
+        if curUser.id == user.id else []
+    )
+    sent_proposals = DateProposal.query.filter_by(proposer_id=curUser.id).all()
+
+    set_dates = DateProposal.query.filter(
+        db.or_(
+            DateProposal.recipient_id == user.id,
+            DateProposal.proposer_id == user.id
+        ),
+        DateProposal.status == model.ProposalStatus.accepted.value
+    ).all()
+
     current_year = datetime.now().year
 
-    return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button, current_year=current_year)
+    return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button,
+                           current_year=current_year, received_proposals=received_proposals,
+                           sent_proposals=sent_proposals, set_dates=set_dates)
 
 @bp.route("/like/<int:user_id>", methods=["POST"])
 @flask_login.login_required
@@ -225,3 +242,81 @@ def search():
     ).limit(10).all()
         
     return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year)
+
+@bp.route('/propose_date/<int:recipient_id>', methods=['POST'])
+@flask_login.login_required
+def propose_date(recipient_id):
+    curUser = flask_login.current_user
+    recipient = db.session.get(model.User, recipient_id)
+
+    if curUser.id != recipient.id:
+        proposed_day_str = request.form.get("proposed_day")
+        try:
+            proposed_day = datetime.strptime(proposed_day_str, "%Y-%m-%d")
+            if proposed_day < datetime.now():
+                flash("Please select a future date.")
+                return redirect(url_for("main.profile", user_id=recipient_id))
+            
+            # Check for table availability
+            proposals_on_day = DateProposal.query.filter_by(
+                proposed_day=proposed_day, status=model.ProposalStatus.proposed.value
+            ).count()
+            max_tables = 10  # Assuming 10 tables per night
+            if proposals_on_day >= max_tables:
+                flash("No available tables for the selected night.")
+                return redirect(url_for("main.profile", user_id=recipient_id))
+
+            # Create the date proposal
+            optional_message = request.form.get("optional_message")
+            if curUser in recipient.blocking:
+                setStatus = model.ProposalStatus.ignored.value
+            else:
+                setStatus = model.ProposalStatus.proposed.value
+            proposal = DateProposal(
+                proposer_id=curUser.id,
+                recipient_id=recipient.id,
+                created_time=datetime.now(),
+                proposed_day=proposed_day,
+                status=setStatus,  # Enum value as integer
+                message=optional_message
+            )
+            db.session.add(proposal)
+            db.session.commit()
+
+        except ValueError:
+            flash("Invalid date format.")
+        
+        return redirect(url_for("main.profile", user_id=recipient_id))
+
+
+@bp.route('/respond_proposal/<int:proposal_id>', methods=['POST'])
+@flask_login.login_required
+def respond_proposal(proposal_id):
+    curUser = flask_login.current_user
+    proposal = DateProposal.query.get_or_404(proposal_id)
+    
+    # Ensure only the recipient can respond
+    if proposal.recipient_id != curUser.id:
+        flash("You do not have permission to respond to this proposal.")
+        return redirect(url_for('main.index'))
+
+    action = request.form.get('action')
+    
+    if action == 'accept':
+        proposal.status = model.ProposalStatus.accepted.value
+        proposal.response_time = datetime.now()
+    elif action == 'reject':
+        proposal.status = model.ProposalStatus.rejected.value
+        proposal.response_time = datetime.now()
+    elif action == 'ignore':
+        proposal.status = model.ProposalStatus.ignored.value
+        proposal.response_time = datetime.now()
+    elif action == 'reschedule':
+        proposal.status = model.ProposalStatus.reschedule.value
+        proposal.response_time = datetime.now()
+    else:
+        flash("Invalid action.")
+        return redirect(url_for('main.profile', user_id=curUser.id))
+    
+    db.session.commit()
+    return redirect(url_for('main.profile', user_id=curUser.id))

@@ -20,6 +20,9 @@
             <input type="submit" value="Unlike">
         </form>
     {% endif %}
+
+
+
     <div class="profileElements">
         <div style="border: 1px solid black; padding: 0% 2%">
             <h4>Gender:</h4>
@@ -41,6 +44,20 @@
         </div>
     </div>
 </div>
+
+{% if curUser.id != user.id %}
+<div class="propose-date">
+    <h3>Propose a Date</h3>
+    <form action="{{ url_for('main.propose_date', recipient_id=user.id) }}" method="post">
+        <label for="proposed_day">Select a date:</label>
+        <input type="date" id="proposed_day" name="proposed_day" required>
+        <label for="optional_message">Optional message:</label>
+        <textarea id="optional_message" name="optional_message"></textarea>
+        <button type="submit">Propose Date</button>
+    </form>
+</div>
+{% endif %}
+
 {% if user.id == current_user.id %}
     <a href="{{ url_for('main.editProfile') }}" class="button">Edit profile</a>
     <button id="blockedBtn">Blocked Users</button>
@@ -71,6 +88,64 @@
             <a href="{{ url_for('main.profile', user_id=liker.id) }}">
                 <div>{{liker.username}}</div>
             </a>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% if user.id == current_user.id and set_dates %}
+    <div class = "set-dates">
+    <h3> Set Dates</h3>
+    {% for date in set_dates %}
+        <div class="proposal">
+            {% if date.proposer.id == current_user.id %}
+                <p>Set a date with {{ date.recipient.username }} for {{ date.proposed_day.strftime('%Y-%m-%d') }}</p>
+            {% else %}
+                <p>{{ date.proposer.username }} set a date with you for {{ date.proposed_day.strftime('%Y-%m-%d')}}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
+{% endif %}
+
+{% if user.id == current_user.id and received_proposals %}
+    <div class = "received-proposals">
+        <h3>Received Date Proposals</h3>
+        {% for proposal in received_proposals %}
+            <div class="proposal">
+                <p>{{ proposal.proposer.username }} proposed a date for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                <p>Message: {{proposal.message}}</p>
+                <form action="{{ url_for('main.respond_proposal', proposal_id=proposal.id) }}" method="post">
+                    <button type="submit" name="action" value="accept">Accept</button>
+                    <button type="submit" name="action" value="reject">Reject</button>
+                    <button type="submit" name="action" value="ignore">Ignore</button>
+                    <button type="submit" name="action" value="reschedule">Request Reschedule</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Display Sent Proposals (for any user) -->
+{% if user.id == current_user.id and sent_proposals %}
+    <div class = "sent-proposals">
+        <h3>Sent Date Proposals</h3>
+        {% for proposal in sent_proposals %}
+            <div class="proposal">
+                <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                <p>Status: 
+                {% if proposal.status == '0' %}
+                    Proposed
+                {% elif proposal.status == '1' %}
+                    Accepted
+                {% elif proposal.status == '2' %}
+                    Rejected
+                {% elif proposal.status == '3' %}
+                    Proposed
+                {% elif proposal.status == '4' %}
+                    Reschedule Requested
+                {% endif %}
+                </p>
+            </div>
         {% endfor %}
     </div>
 {% endif %}

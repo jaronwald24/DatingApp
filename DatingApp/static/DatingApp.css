@@ -203,3 +203,147 @@ body {
     text-decoration: none;
     cursor: pointer;
   }
+
+.propose-date {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin: 2% auto;
+    padding: 2%;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.propose-date h3 {
+    color: #ff69b4;
+    text-align: center;
+}
+
+.propose-date label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.propose-date input[type="date"],
+.propose-date textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.propose-date button {
+    width: 100%;
+    background-color: #ff69b4;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.received-proposals {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 2% auto;
+    padding: 2%;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.received-proposals h3 {
+    color: #ff69b4;
+    text-align: center;
+}
+
+.proposal {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.proposal p {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.proposal form {
+    display: flex;
+    justify-content: space-between;
+}
+
+.proposal button {
+    background-color: #ff69b4;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.proposal button:hover {
+    background-color: #ff85c1;
+}
+
+.sent-proposals {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 2% auto;
+    padding: 2%;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sent-proposals h3 {
+    color: #ff69b4;
+    text-align: center;
+}
+
+.sent-proposals .proposal {
+    display: flex;
+}
+
+.set-dates {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: 2% auto;
+    padding: 2%;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.set-dates h3 {
+    color: #ff69b4;
+    text-align: center;
+}
+
+.set-dates .proposal {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.set-dates .proposal p {
+    margin: 0 0 10px 0;
+    color: #333;
+}
