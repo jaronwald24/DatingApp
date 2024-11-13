@@ -7,9 +7,9 @@
             <div class="notification">{{ message }}</div>
         {% endfor %}
     {% endwith %}
-    <form action="{{ url_for('auth.signup') }}" method="post" enctype="multipart/form-data">
-        <div class="createProfileContainer">
-            <h2>Sign Up!!!</h2>      
+    <div class="createProfileContainer">
+        <form action="{{ url_for('auth.signup') }}" method="post" enctype="multipart/form-data">
+            <h2>Sign Up</h2>      
             <div class="createProfileElement">
                 <label for="email">Email:</label>
                 <input type="email" name="email" required/>
@@ -64,9 +64,12 @@
                 <label for="photo_id">Profile Photo:</label>
                 <input type="file" id="photo_id" name="photo_id" accept="image/jpeg,image/png">
             </div>
-            <div><input class="btn btn-success mt-2" type="submit" value="Sign Up"/></div>
+            <div><input class="btn btn-success mt-2" type="submit" style="background-color: #ff69b4; border: none; width: 100%" value="Sign Up"/></div>
             <div><a href="{{ url_for('auth.login') }}">Already have an account? Log in here!</a>
+        </form>
+        <div>
+            <img src="{{ url_for('static', filename='hl.webp') }}" alt="heart" style="width: 100px; height: 100px; margin-top: 20px;">
         </div>
-    </form>
+    </div>
     
 {% endblock %}

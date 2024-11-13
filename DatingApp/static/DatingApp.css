@@ -41,7 +41,6 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-top: 5%;
 }
 
 .responseForm {
@@ -59,6 +58,14 @@ body {
     padding: 1% 1%;
 }
 
+.loginContainer {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    margin: 1% 1%;
+    padding: 3% 3%;
+}
+
 .editProfileElement {
     display: flex;
     flex-direction: column;
@@ -67,8 +74,8 @@ body {
 
 .createProfileContainer {
     display: flex;
-    flex-direction: column;
-    width: 30%;
+    flex-direction: row;
+    width: 100%;
     margin: 1% 1%;
     padding: 1% 1%;
 }
@@ -93,7 +100,7 @@ body {
     justify-content: center;
     align-items: center;
     margin: 10px;
-    width: 125px;
+    width: 130px;
     height: 125px;
 }
 
@@ -106,9 +113,12 @@ body {
 }
 
 .pfpSmall {
-    width: 50px; 
-    height: 50px;
+    width: 40px; 
+    height: 40px;
     border-radius: 50%;
+    object-fit: cover; 
+    border: 1.5px solid #000;
+
 }
 
 .welcome-section h1 {
@@ -192,6 +202,8 @@ body {
     display: flex;
     flex-direction: column;
     padding: 0.5% 1.5%;
+    width: 30%;
+    word-break: break-word;
 }
 .listUsers h2 {
     color: #ff69b4;
@@ -205,21 +217,34 @@ body {
     margin-bottom: 15px;
 }
 
-.modal {
-    display: flex;
-    align-content: center;
-    z-index: 1;  
-    overflow: auto; 
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-  }
-  
-  .modal-content {
-    background-color: #fefefe;
+.blockedModal,
+.likersModal,
+.likedModal
+{
+    display: none; 
+    position: fixed;
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black background */
+    justify-content: center;
+    align-items: center;
+}
+
+
+.modalContent {
+    width: 100%;
+    max-width: 900px;
+    max-height: 600px;
+    overflow: auto;
     padding: 20px;
-    border: 1px solid #888;
-    width: 50%; 
-  }
+    background-color: white; 
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+    position: relative; 
+}
   
   .close {
     color: #aaa;
@@ -378,3 +403,25 @@ body {
     margin: 0 0 10px 0;
     color: #333;
 }
+
+#likedBtn {
+    color: #ff69b4;
+    cursor: pointer;
+    border-color: #ff69b4;
+
+}
+
+#saveChangesBtn {
+    color: #ff69b4;
+    cursor: pointer;
+    border-color: #ff69b4;
+}
+
+#likedBtn:hover,
+#saveChangesBtn:hover 
+{
+    color: #fff; 
+    background-color: #ff69b4;
+}
+
+

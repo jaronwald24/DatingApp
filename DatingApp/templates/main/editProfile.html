@@ -48,8 +48,8 @@
             <label for="photo_id">Profile Photo:</label>
             <input type="file" id="photo_id" name="photo_id" accept="image/jpeg,image/png">
         </div>
-        <button type="submit" class="btn btn-success mt-2">Save Changes</button>
-        <a href="{{ url_for('main.profile', user_id=current_user.id) }}" class="btn btn-outline-danger mt-2" role="button">Cancel</a>
+        <button type="submit" class="btn btn-success mt-2" style="background-color: #ff69b4; border: none; width: 100%" >Save Changes</button>
+        <a href="{{ url_for('main.profile', user_id=current_user.id) }}" id="saveChangesBtn" class="btn btn-outline-primary mt-2" style="border-color: #ff69b4; width: 100%" role="button">Cancel</a>
     </div>
 </form>
 

@@ -26,36 +26,14 @@
             </div>
         </form>
         <hr style="border: 2px solid ; color:#ff69b4; width: 100%">
-        {% if searchUsers %}
-        <div class="listUsers">
-            <br>
-            <h2>Search Results</h2>
-            {% for user in searchUsers %}
-                <div class="userRow">
-                    {% if user.profile.photo %}
-                        <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" class="pfpSmall" alt="Profile photo" style="margin-right: 15px;">
-                    {% else %}
-                        <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" class="pfpSmall" alt="Default profile photo" style="margin-right: 15px;">
-                    {% endif %}
-                    <div style="display: flex; flex-direction: column;">
-                        <h5 style="margin: 0;"><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h5>
-                        <p style="margin: 0;">Age: {{ current_year - user.profile.birth_year }}</p>
-                    </div>
-                </div>
-                <p style="margin-left: 15px;">{{ user.profile.bio }}</p>
-                <hr style="border: 0.5px solid; color: grey; width: 100%;">
-            {% endfor %}
-        </div>
-        {% else %}
-            {% endif %}
+    
+        <div style="display: flex; justify-content: space-evenly"> 
 
-        
-
-            {% if defaultUsers %}
+            {% if searchUsers %}            
             <div class="listUsers">
                 <br>
-                <h2>Users you may like</h2>
-                {% for user in defaultUsers %}
+                <h2>Search Results</h2>
+                {% for user in searchUsers %}
                     <div class="userRow">
                         {% if user.profile.photo %}
                             <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" class="pfpSmall" alt="Profile photo" style="margin-right: 15px;">
@@ -71,8 +49,32 @@
                     <hr style="border: 0.5px solid; color: grey; width: 100%;">
                 {% endfor %}
             </div>
-        {% else %}
-    {% endif %}
+            {% else %}
+                {% endif %}
+                {% if defaultUsers %}
+                <div class="listUsers">
+                    <br>
+                    <h2>Users you may like</h2>
+                    {% for user in defaultUsers %}
+                        <div class="userRow">
+                            {% if user.profile.photo %}
+                                <img src="{{ url_for('static', filename='photos/photo-' ~ user.profile.photo.id ~ '.' ~ user.profile.photo.file_extension) }}" class="pfpSmall" alt="Profile photo" style="margin-right: 15px;">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" class="pfpSmall" alt="Default profile photo" style="margin-right: 15px;">
+                            {% endif %}
+                            <div style="display: flex; flex-direction: column;">
+                                <h5 style="margin: 0;"><a href="{{ url_for('main.profile', user_id=user.id) }}">{{ user.profile.fullname }}</a></h5>
+                                <p style="margin: 0;">Age: {{ current_year - user.profile.birth_year }}</p>
+                            </div>
+                        </div>
+                        <p style="margin-left: 15px;">{{ user.profile.bio }}</p>
+                        <hr style="border: 0.5px solid; color: grey; width: 100%;">
+                    {% endfor %}
+                </div>
+            {% else %}
+            {% endif %}
+
+        </div>
 
 
     </section>
