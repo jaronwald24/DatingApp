@@ -30,6 +30,13 @@
                     </div>
                     {% endif %}
             </div>
+            {% with messages = get_flashed_messages() %}
+                {% for message in messages %}
+                    <div class="notification">
+                        <h4>  &#x2757; {{ message }}  &#x2757; </h4>
+                    </div>
+                {% endfor %}
+            {% endwith %}
         </header>
         <section class="content">
             {% block content %}{% endblock %}
