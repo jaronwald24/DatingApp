@@ -39,10 +39,9 @@
             </form>
         {% endif %}
     </div>
-    <hr style="border: 1px solid; color: black; width: 75%;">
+    <hr style="border: 1px solid ; color:#ff69b4; width: 75%">
     <div class="profileElements">
-        <div>
-            <div style="display: flex; flex-direction: column">
+            <div style="display: flex; flex-direction: column; text-align: center; width: 20%">
                 <h4 style="margin-bottom: 0; text-align: center">
                     {%if user.profile.gender== "male" %} Male
                     {%else%} Female
@@ -50,8 +49,7 @@
                 </h4>
                 <p>Gender</p>
             </div>
-        </div>
-        <div>
+        <div style="display: flex; flex-direction: column; text-align: center; width: 20%">
             <h4 style="margin-bottom: 0; text-align: center">
                 {%if user.profile.genderPreference== "male" %} Male
                     {%else%} Female
@@ -61,7 +59,7 @@
                 Gender Preference
             </p>
         </div>
-        <div>
+        <div style="display: flex; flex-direction: column; text-align: center; width: 20%">
             <h4 style="margin-bottom: 0; text-align: center">{{ current_year - user.profile.birth_year }}</h4>
             <p>
                 Age
@@ -72,11 +70,7 @@
         <h4 style="margin-bottom: 0; word-break: break-word; text-align: center">{{user.profile.bio}}</h4>
         <p style="text-align: center">Bio</p>
     </div>
-    <hr style="border: 1px solid black; width: 75%;">
-</div>
-<div style="display: flex; justify-content: center">
-    <button id="likersBtn" class="btn btn-primary me-2" style="background-color: #ff69b4; border: none">People who liked you</button>
-    <button id="likedBtn" class="btn btn-outline-primary">People you liked</button>
+    <hr style="border: 1px solid ; color:#ff69b4; width: 75%">
 </div>
 {% if curUser.id != user.id %}
 <div class="propose-date">
@@ -92,6 +86,10 @@
 {% endif %}
 
 {% if user.id == current_user.id %}
+    <div style="display: flex; justify-content: center">
+        <button id="likersBtn" class="btn btn-primary me-2" style="background-color: #ff69b4; border: none">People who liked you</button>
+        <button id="likedBtn" class="btn btn-outline-primary">People you liked</button>
+    </div>
     <div id="blockedModal" class="blockedModal">
         <div class="modalContent">
             <span class="close">&times;</span>
@@ -200,8 +198,7 @@
         <div class = "proposal-section">
             <h3>Received Date Proposals</h3>
             {% if not received_proposals %}
-                <p style="font-size: 3em; color: red; text-align: center; font-weight: bold; text-shadow: 2px 2px 4px #000000;">No proposals received</p>
-                <p style="font-size: .8em; color: red; text-align: center; font-weight: bold; text-shadow: 2px 2px 8px #000000;">Loser</p>
+                <p style="font-size: 1em; color: red; text-align: center; font-weight: bold; text-shadow: 1px 1px 2px #000000;">No proposals received</p>
             {% endif %}
             {% for proposal in received_proposals %}
                 <div class="proposal">

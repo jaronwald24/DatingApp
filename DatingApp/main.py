@@ -1,4 +1,5 @@
 from datetime import datetime
+import random
 import dateutil.tz
 
 from flask import Blueprint, render_template, request, abort,redirect, url_for, flash, current_app
@@ -260,6 +261,53 @@ def search():
     ).limit(10).all()
         
     return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year)
+
+@bp.route('/getRandom', methods=['GET'])
+@flask_login.login_required
+def getRandom():
+    curUser = flask_login.current_user
+
+    gender = request.args.get("gender", '').strip()
+    gender_pref = request.args.get("genderPreference", '').strip()
+    users = []
+
+    if gender or gender_pref:
+        query = db.session.query(model.User).join(model.Profile).options(
+            joinedload(model.User.profile)
+        ).filter(model.User.id != curUser.id)  # Exclude the current user
+
+        if gender:
+            query = query.filter(model.Profile.gender == gender)
+        if gender_pref:
+            query = query.filter(model.Profile.genderPreference == gender_pref)
+
+        blocked_users = [blocked_user.id for blocked_user in curUser.blocking]
+        query = query.filter(model.User.id.notin_(blocked_users))        
+        
+        users = query.all()
+
+    current_year = datetime.now().year
+
+    gender_pref = curUser.profile.genderPreference
+    blocked_users = [blocked_user.id for blocked_user in curUser.blocking]
+
+
+    defaultUsers = db.session.query(model.User).join(model.Profile).filter(
+        model.User.id != curUser.id,
+        model.User.id.notin_(blocked_users),
+        model.Profile.gender == gender_pref,
+        model.Profile.genderPreference == curUser.profile.gender
+    ).all()
+    
+    if defaultUsers:
+        random_user = random.choice(defaultUsers)
+        return redirect(url_for("main.profile", user_id=random_user.id))
+        
+    return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year)
+
+
+
+
 
 @bp.route('/propose_date/<int:recipient_id>', methods=['POST'])
 @flask_login.login_required
