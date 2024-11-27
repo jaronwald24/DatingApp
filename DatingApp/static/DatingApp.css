@@ -99,8 +99,8 @@ body {
     width: 50%;
 }
 
-.createProfileContainer h2 {
-font-size: 2.5em;
+.createProfileContainer, .loginContainer, .editProfileContainer h2 {
+    font-size: 2em;
     margin: 0;
     padding: 5px 0px 10px 0px;
     color: #ff69b4;
@@ -108,14 +108,15 @@ font-size: 2.5em;
     text-align:left;
 }
 
-.createProfileElement label {
+.createProfileElement, .loginContainer, .editProfileContainer label {
     font-weight: bold;
+    font-size: 1.5em;
     padding-top: 10px;
     color: #ff69b4;
     text-align: left;
 }
 
-.createProfileElement input[type="number"]{
+.createProfileElement, .editProfileElement input[type="number"]{
     width: 100%;
     padding: 5px;
     box-sizing: border-box;
@@ -124,7 +125,7 @@ font-size: 2.5em;
     align-self: left;
 }
 
-.createProfileElement select{
+.createProfileElement, .editProfileElement select{
     width: 100%;
     padding: 5px;
     box-sizing: border-box;
@@ -133,7 +134,8 @@ font-size: 2.5em;
     align-self: left;
 }
 
-.createProfileElement input[type="file"]{
+
+.createProfileElement, .editProfileElement input[type="file"]{
     padding: 5px;
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -157,9 +159,8 @@ font-size: 2.5em;
 .profileElements {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    width: 30%;
-    margin: 1% 1%;
+    justify-content: space-evenly;
+    width: 75%;
 }
 
 .pfp {
@@ -466,4 +467,6 @@ font-size: 2.5em;
     background-color: #ff69b4;
 }
 
-
+.emoji {
+    margin: 5px 5px;
+}
