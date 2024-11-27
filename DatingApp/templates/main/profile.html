@@ -229,7 +229,7 @@
         <div class="proposal-section">
             <h3>Proposals</h3>
             {% for proposal in sent_proposals %}
-                {% if proposal.status == '0' %}
+                {% if proposal.status == '0' or proposal.status == '3'%}
                     <div class="proposal">
                         <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
                         <p>Message: {{proposal.proposingMessage}}</p>
@@ -243,15 +243,13 @@
         <div class="proposal-section">
             <h3>Replied</h3>
             {% for proposal in sent_proposals %}
-                {% if proposal.status != '0'  and proposal.status != '1'%}
+                {% if proposal.status != '0' and proposal.status != '3' and proposal.status != '1'%}
                     <div class="proposal">
                         <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
                         <p>Message: {{proposal.replyMessage}}</p>
                         <p>Status: 
                         {% if proposal.status == '2' %}
                             Rejected
-                        {% elif proposal.status == '3' %}
-                            Proposed
                         {% elif proposal.status == '4' %}
                             Reschedule Requested
                         {% endif %}
