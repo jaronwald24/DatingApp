@@ -51,6 +51,14 @@
                         </div>
                     </div>
                     <p style="margin-left: 15px;">{{ user.profile.bio }}</p>
+                    <div class="compliments">
+                        <h5>Compliments:</h5>
+                            {% for compliment in compliments %}
+                            <button class="compliment" id="compliment" data-user-id="{{ user.id }}" data-message="{{ compliment }}">                             
+                                {{ compliment }}
+                              </button>
+                           {% endfor %}
+                    </div>
                     <hr style="border: 0.5px solid; color: grey; width: 100%;">
                 {% endfor %}
             </div>
@@ -72,13 +80,52 @@
                         </div>
                     </div>
                     <p style="margin-left: 15px;">{{ user.profile.bio }}</p>
+                    <div class="compliments">
+                        <h5>Compliments:</h5>
+                            {% for compliment in compliments %}
+                            <button class="compliment" data-user-id="{{ user.id }}" data-message="{{ compliment }}">                             
+                                {{ compliment }}
+                              </button>
+                            {% endfor %}
+                    </div>
                     <hr style="border: 0.5px solid; color: grey; width: 100%;">
                 {% endfor %}
             </div>
             {% endif %}
-
         </div>
 
 
     </section>
+    <script>
+        document.querySelectorAll('.compliment').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.preventDefault();
+                
+                const userId = e.target.getAttribute('data-user-id');
+                const message = e.target.getAttribute('data-message');
+    
+                try {
+                    const response = await fetch(`/compliment/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        alert('Compliment sent!');
+                    }
+                    else {
+                        console.error('Failed to send compliment', response);
+                        alert('Failed to send compliment');
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+        });
+    </script>
 {% endblock %}
