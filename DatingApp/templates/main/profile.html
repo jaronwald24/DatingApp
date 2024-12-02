@@ -276,10 +276,7 @@
 
         <!-- Received Proposals Section-->
         <div class = "proposal-section">
-            <h3>Received Date Proposals</h3>
-            {% if not received_proposals %}
-                <p style="font-size: 1em; color: red; text-align: center; font-weight: bold; text-shadow: 1px 1px 2px #000000;">No proposals received</p>
-            {% endif %}
+            <h3>Received Proposals</h3>
             {% for proposal in received_proposals %}
                 {%if proposal.status == '0'%}
                 <div class="proposal">
@@ -319,7 +316,7 @@
 
         <!-- Sent Proposals Section-->
         <div class="proposal-section">
-            <h3>Proposals</h3>
+            <h3>Sent Proposals</h3>
             {% for proposal in sent_proposals %}
                 {% if proposal.status == '0' or proposal.status == '3'%}
                     <div class="proposal">
