@@ -10,9 +10,17 @@
     <body>
         <header>
             <div class="appHeader">
+                
+                    {% if current_user.is_authenticated%}
                     <button type="button" onclick="window.location.href='{{ url_for('main.index') }}'" style="background: none; border: none; padding: 0; font-size: inherit; cursor: pointer;">
                         <h3>Amora</h3>
                     </button>
+                    {% else %}
+                    <button type="button" style="background: none; border: none; padding: 0; font-size: inherit; cursor: pointer;">
+                        <h3>Amora</h3>
+                    </button>
+                    {% endif %}
+
                     {% if current_user.is_authenticated: %}
                     <div style="display: flex">
                         <a href="{{ url_for('main.profile', user_id=current_user.id)}}">
