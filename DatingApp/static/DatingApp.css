@@ -99,8 +99,8 @@ body {
     width: 50%;
 }
 
-.createProfileContainer, .loginContainer, .editProfileContainer h2 {
-    font-size: 2em;
+.createProfileContainer h2 {
+    font-size: 2.5em;
     margin: 0;
     padding: 5px 0px 10px 0px;
     color: #ff69b4;
@@ -108,15 +108,14 @@ body {
     text-align:left;
 }
 
-.createProfileElement, .loginContainer, .editProfileContainer label {
+.createProfileElement label {
     font-weight: bold;
-    font-size: 1.5em;
     padding-top: 10px;
     color: #ff69b4;
     text-align: left;
 }
 
-.createProfileElement, .editProfileElement input[type="number"]{
+.createProfileElement input[type="number"]{
     width: 100%;
     padding: 5px;
     box-sizing: border-box;
@@ -125,7 +124,7 @@ body {
     align-self: left;
 }
 
-.createProfileElement, .editProfileElement select{
+.createProfileElement select{
     width: 100%;
     padding: 5px;
     box-sizing: border-box;
@@ -134,8 +133,7 @@ body {
     align-self: left;
 }
 
-
-.createProfileElement, .editProfileElement input[type="file"]{
+.createProfileElement input[type="file"]{
     padding: 5px;
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -159,8 +157,9 @@ body {
 .profileElements {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
-    width: 75%;
+    justify-content: space-between;
+    width: 30%;
+    margin: 1% 1%;
 }
 
 .pfp {
@@ -345,9 +344,9 @@ body {
 }
 
 .propose-date label {
-    margin-top: 10px;
     font-weight: bold;
     color: #333;
+    display: flex;
 }
 
 .propose-date input[type="date"],
@@ -360,6 +359,17 @@ body {
     border-radius: 4px;
 }
 
+.propose-date select{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin: 2% auto;
+    padding: 2%;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .propose-date button {
     width: 100%;
     background-color: #ff69b4;
@@ -370,6 +380,8 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
+
+
 
 .proposal {
     display: flex;
@@ -467,6 +479,4 @@ body {
     background-color: #ff69b4;
 }
 
-.emoji {
-    margin: 5px 5px;
-}
+

@@ -15,6 +15,14 @@ class ProposalStatus(enum.Enum):
     rejected = 2
     ignored = 3
     reschedule = 4
+    
+class Restaurant(enum.Enum):
+    mexican = 0
+    italian = 1
+    chinese = 2
+    japanese = 3
+    indian = 4
+    thai = 5
 
 class LikingAssociation(db.Model):
     liker_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
@@ -79,6 +87,7 @@ class Profile(db.Model):
     )
     fullname: Mapped[str] = mapped_column(String(128))
     bio: Mapped[Optional[str]] = mapped_column(Text)
+    instagram_username: Mapped[Optional[str]] = mapped_column(String(64))
     birth_year: Mapped[Optional[int]] = mapped_column(Integer)
     age_minimum: Mapped[Optional[int]] = mapped_column(Integer)
     age_maximum: Mapped[Optional[int]] = mapped_column(Integer)
@@ -101,6 +110,7 @@ class DateProposal(db.Model):
     created_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     response_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     proposed_day: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    restaurant_type: Mapped[Optional[Restaurant]] = mapped_column(String(16))
     status: Mapped[ProposalStatus] = mapped_column(String(16))
     proposingMessage: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     replyMessage: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

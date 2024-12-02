@@ -48,6 +48,7 @@ def signup_post():
     # profile table
     name = request.form.get("name")
     bio = request.form.get("bio")
+    instagram_username = request.form.get("ig")
     birth_year = int(request.form.get("birth_year"))
     gender = request.form.get("gender")
     genderPreference = request.form.get("genderPreference")
@@ -75,6 +76,7 @@ def signup_post():
         user = new_user,
         fullname=name,
         bio=bio,
+        instagram_username=instagram_username,
         birth_year=birth_year,
         gender=gender,
         genderPreference=genderPreference,
@@ -90,8 +92,7 @@ def signup_post():
         new_path = photo_filename(new_photo)
         uploaded_file.save(new_path)
         
-    flash("You've successfully signed up!")
-    return redirect(url_for("main.index"))
+    return redirect(url_for("auth.login"))
 
 @bp.route("/login")
 def login():

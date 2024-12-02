@@ -70,6 +70,13 @@
         <h4 style="margin-bottom: 0; word-break: break-word; text-align: center">{{user.profile.bio}}</h4>
         <p style="text-align: center">Bio</p>
     </div>
+    {% if user.profile.instagram_username %}
+    <div>
+        <a href="https://www.instagram.com/{{ user.profile.instagram_username }}" target="_blank" style="text-decoration: none; color: #ff69b4;">
+            Visit {{ user.profile.fullname }}'s Instagram
+        </a>
+    </div>
+{% endif %}
     <hr style="border: 1px solid ; color:#ff69b4; width: 75%">
 </div>
 {% if curUser.id != user.id %}
@@ -80,6 +87,16 @@
         <input type="date" id="proposed_day" name="proposed_day" required>
         <label for="optional_message">Optional message:</label>
         <textarea id="optional_message" name="optional_message"></textarea>
+        <label for="restaurant"> Select a restaurant:</label>
+        <select id="restaurant" name="restaurant">
+            <option value="" selected>-- None --</option>
+            <option value="0">Mexican</option>
+            <option value="1">Italian</option>
+            <option value="2">Chinese</option>
+            <option value="3">Japanese</option>
+            <option value="4">Indian</option>
+            <option value="5">Thai</option>
+        </select>
         <button type="submit">Propose Date</button>
     </form>
 </div>
@@ -185,10 +202,36 @@
                 <div class="proposal">
                     {% if date.proposer.id == current_user.id %}
                         <p>Set a date with {{ date.recipient.username }} for {{ date.proposed_day.strftime('%Y-%m-%d') }}</p>
-                        <p>They replied: {{date.replyMessage}}</p>
+                        {% if date.replyMessage %}
+                            <p>They replied: {{ date.replyMessage }}</p>
+                        {% endif %}
+                        {% if date.restaurant_type %}
+                            <p>Restaurant: 
+                                {% if date.restaurant_type == '0' %} Mexican
+                                {% elif date.restaurant_type == '1' %} Italian
+                                {% elif date.restaurant_type == '2' %} Chinese
+                                {% elif date.restaurant_type == '3' %} Japanese
+                                {% elif date.restaurant_type == '4' %} Indian
+                                {% elif date.restaurant_type == '5' %} Thai
+                                {% endif %}
+                            </p>
+                        {% endif %}
                     {% else %}
                         <p>{{ date.proposer.username }} set a date with you for {{ date.proposed_day.strftime('%Y-%m-%d')}}</p>
+                        {%if date.replyMessage %}
                         <p>Your reply: {{date.replyMessage}}</p>
+                        {% endif %}
+                        {% if date.restaurant_type %}
+                            <p>Restaurant: 
+                                {% if date.restaurant_type == '0' %} Mexican
+                                {% elif date.restaurant_type == '1' %} Italian
+                                {% elif date.restaurant_type == '2' %} Chinese
+                                {% elif date.restaurant_type == '3' %} Japanese
+                                {% elif date.restaurant_type == '4' %} Indian
+                                {% elif date.restaurant_type == '5' %} Thai
+                                {% endif %}
+                            </p>
+                        {% endif %}
                     {% endif %}
                 </div>
             {% endfor %}
@@ -201,9 +244,23 @@
                 <p style="font-size: 1em; color: red; text-align: center; font-weight: bold; text-shadow: 1px 1px 2px #000000;">No proposals received</p>
             {% endif %}
             {% for proposal in received_proposals %}
+                {%if proposal.status == '0'%}
                 <div class="proposal">
                     <p>{{ proposal.proposer.username }} proposed a date for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
-                    <p>Message: {{proposal.proposingMessage}}</p>
+                    {% if proposal.proposingMessage %}
+                        <p>Message: {{proposal.proposingMessage}}</p>
+                    {% endif %}
+                    {% if proposal.restaurant_type %}
+                        <p>Restaurant: 
+                            {% if proposal.restaurant_type == '0' %} Mexican
+                            {% elif proposal.restaurant_type == '1' %} Italian
+                            {% elif proposal.restaurant_type == '2' %} Chinese
+                            {% elif proposal.restaurant_type == '3' %} Japanese
+                            {% elif proposal.restaurant_type == '4' %} Indian
+                            {% elif proposal.restaurant_type == '5' %} Thai
+                            {% endif %}
+                        </p>
+                    {% endif %}
                     <form action="{{ url_for('main.respond_proposal', proposal_id=proposal.id) }}" method="post">
                         <div id = "response-wrapper">
                             <div id = "optional_message">
@@ -219,6 +276,7 @@
                         </div>
                     </form>
                 </div>
+                {% endif %}
             {% endfor %}
         </div>
 
@@ -229,7 +287,20 @@
                 {% if proposal.status == '0' or proposal.status == '3'%}
                     <div class="proposal">
                         <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
-                        <p>Message: {{proposal.proposingMessage}}</p>
+                        {%if proposal.proposingMessage %}
+                            <p>Message: {{proposal.proposingMessage}}</p>
+                        {% endif %}
+                        {% if proposal.restaurant_type %}
+                            <p>Restaurant: 
+                                {% if proposal.restaurant_type == '0' %} Mexican
+                                {% elif proposal.restaurant_type == '1' %} Italian
+                                {% elif proposal.restaurant_type == '2' %} Chinese
+                                {% elif proposal.restaurant_type == '3' %} Japanese
+                                {% elif proposal.restaurant_type == '4' %} Indian
+                                {% elif proposal.restaurant_type == '5' %} Thai
+                                {% endif %}
+                            </p>
+                        {% endif %}
                         <p>Status: Proposed</p>
                     </div>
                 {% endif %}
@@ -239,11 +310,27 @@
         <!-- Replied Proposals Section-->
         <div class="proposal-section">
             <h3>Replied</h3>
-            {% for proposal in sent_proposals %}
+            {% for proposal in received_proposals %}
                 {% if proposal.status != '0' and proposal.status != '3' and proposal.status != '1'%}
                     <div class="proposal">
                         <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
-                        <p>Message: {{proposal.replyMessage}}</p>
+                        {%if proposal.proposingMessage %}
+                            <p>Message: {{proposal.proposingMessage}}</p>
+                        {% endif %}
+                        {% if proposal.replyMessage %}
+                            <p>Reply: {{proposal.replyMessage}}</p>
+                        {% endif %}
+                        {% if proposal.restaurant_type %}
+                            <p>Restaurant: 
+                                {% if proposal.restaurant_type == '0' %} Mexican
+                                {% elif proposal.restaurant_type == '1' %} Italian
+                                {% elif proposal.restaurant_type == '2' %} Chinese
+                                {% elif proposal.restaurant_type == '3' %} Japanese
+                                {% elif proposal.restaurant_type == '4' %} Indian
+                                {% elif proposal.restaurant_type == '5' %} Thai
+                                {% endif %}
+                            </p>
+                        {% endif %}
                         <p>Status: 
                         {% if proposal.status == '2' %}
                             Rejected

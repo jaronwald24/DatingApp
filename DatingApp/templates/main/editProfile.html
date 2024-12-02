@@ -19,6 +19,10 @@
             <textarea id="bio" placeholder="Hi, my name is..." name="bio">{{ user.profile.bio }}</textarea>
         </div>
         <div class="editProfileElement">
+            <label for="ig">Instagram Username:</label>
+            <textarea id = "ig" placeholder="john_snow" name="ig">{{ user.profile.instagram_username }}</textarea>
+        </div>
+        <div class="editProfileElement">
             <label for="birth_year">Birth Year:</label>
             <input type="number" id="birth_year" name="birth_year" min="1924" max="2024" placeholder="e.g, 1990" value="{{ user.profile.birth_year }}" required>
         </div>

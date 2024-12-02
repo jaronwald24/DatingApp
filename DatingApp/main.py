@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import dateutil.tz
 
@@ -63,8 +63,13 @@ def profile(user_id):
         block_button = "block"
         
         
+    # Received proposals are filtered out after 10 days, keeping the user's profile page clean
+    # Note this gets all received proposals, and we filter by proposed/rejected/ignored in the template
     received_proposals = (
-        DateProposal.query.filter_by(recipient_id=user.id, status=model.ProposalStatus.proposed.value).all()
+        DateProposal.query.filter(
+            DateProposal.recipient_id == user.id,
+            DateProposal.created_time >= datetime.now() - timedelta(days=10)
+        ).all()
         if curUser.id == user.id else []
     )
     sent_proposals = DateProposal.query.filter_by(proposer_id=curUser.id).all()
@@ -136,6 +141,7 @@ def editProfilePost():
 
     dbUser.profile.bio = request.form.get("bio")
     print('bio', request.form.get("bio"))
+    dbUser.profile.instagram_username = request.form.get("ig") or dbUser.instagram_username
     dbUser.profile.birth_year = request.form.get("birth_year") or dbUser.profile.birth_year
     dbUser.profile.gender = request.form.get("gender") or dbUser.profile.gender
     dbUser.profile.genderPreference = request.form.get("genderPreference") or dbUser.profile.genderPreference
@@ -323,17 +329,24 @@ def propose_date(recipient_id):
                 flash("Please select a future date.")
                 return redirect(url_for("main.profile", user_id=recipient_id))
             
-            # Check for table availability
+
             proposals_on_day = DateProposal.query.filter_by(
                 proposed_day=proposed_day, status=model.ProposalStatus.proposed.value
             ).count()
+
+            dates_on_day = DateProposal.query.filter_by(
+                proposed_day=proposed_day, status=model.ProposalStatus.accepted.value
+            ).count()
+
             max_tables = 10  # Assuming 10 tables per night
-            if proposals_on_day >= max_tables:
+
+            if proposals_on_day + dates_on_day >= max_tables:
                 flash("No available tables for the selected night.")
                 return redirect(url_for("main.profile", user_id=recipient_id))
 
             # Create the date proposal
             optional_message = request.form.get("optional_message")
+            restaurant = request.form.get("restaurant")
             if curUser in recipient.blocking:
                 setStatus = model.ProposalStatus.ignored.value
             else:
@@ -343,7 +356,8 @@ def propose_date(recipient_id):
                 recipient_id=recipient.id,
                 created_time=datetime.now(),
                 proposed_day=proposed_day,
-                status=setStatus,  # Enum value as integer
+                restaurant_type=restaurant,
+                status=setStatus,  
                 proposingMessage=optional_message
             )
             db.session.add(proposal)
