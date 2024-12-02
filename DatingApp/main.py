@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import random
 import dateutil.tz
 
-from flask import Blueprint, render_template, request, abort,redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, abort,redirect, url_for, flash, current_app, Flask
 import flask_login
 import pathlib
 from sqlalchemy.orm import joinedload
@@ -15,6 +15,7 @@ from utilities.helperFunctions import photo_filename
 
 bp = Blueprint("main", __name__)
 
+    
 
 @bp.route("/")
 @flask_login.login_required
@@ -37,9 +38,9 @@ def index():
     ).limit(10).all()
 
 
+    compliments = ["So Beautiful", "So Handsome", "Cute", "Looking Good", "Wow", "So Pretty", "Stunning"]
 
-
-    return render_template("main/index.html", user=curUser, defaultUsers = defaultUsers, current_year=current_year)
+    return render_template("main/index.html", user=curUser, defaultUsers = defaultUsers, current_year=current_year, compliments=compliments)
 
 
 @bp.route("/profile/<int:user_id>")
@@ -266,7 +267,9 @@ def search():
         model.Profile.genderPreference == curUser.profile.gender
     ).limit(10).all()
         
-    return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year)
+    compliments = ["So Beautiful", "So Handsome", "Cute", "Looking Good", "Wow", "So Pretty", "Stunning"]
+
+    return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year, compliments=compliments)
 
 @bp.route('/getRandom', methods=['GET'])
 @flask_login.login_required
@@ -308,8 +311,10 @@ def getRandom():
     if defaultUsers:
         random_user = random.choice(defaultUsers)
         return redirect(url_for("main.profile", user_id=random_user.id))
-        
-    return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year)
+    
+    compliments = ["So Beautiful", "So Handsome", "Cute", "Looking Good", "Wow", "So Pretty", "Stunning"]
+
+    return render_template("main/index.html", user=curUser, searchUsers=users, defaultUsers = defaultUsers, current_year=current_year, compliments=compliments)
 
 
 
@@ -441,3 +446,40 @@ def unblock(user_id):
     db.session.commit()
     flash("You've unblocked {}.".format(unblockee.username))
     return redirect(url_for("main.profile", user_id=user_id))
+
+@bp.route('/compliment/<int:user_id>', methods=['POST'])
+@flask_login.login_required
+def complimentUser(user_id):
+    curUser = flask_login.current_user
+    data = request.get_json()
+    message = data.get('message')
+    recipient = db.session.get(model.User, user_id)
+    
+    if recipient:
+        flash(f"Compliment sent to {recipient.username}: {message}")
+        newCompliment = model.Compliments(sender_id=curUser.id, recipient_id=user_id, message=message)
+        db.session.add(newCompliment)
+        db.session.commit()
+    else:
+        flash("User not found.")
+    
+    return redirect(url_for("main.index", user_id=user_id))
+
+@bp.route('/deleteCompliment', methods=['POST'])
+@flask_login.login_required
+def deleteCompliment():
+    curUser = flask_login.current_user
+    data = request.get_json()
+    c_id = data.get('c_id')
+    
+    print(f"Compliment ID received: {c_id}")
+
+    compliment = db.session.get(model.Compliments, c_id)
+    if compliment:
+        db.session.delete(compliment)
+        db.session.commit()
+        flash("Compliment deleted.")
+    else:
+        flash("Compliment not found.")
+    
+    return redirect(url_for("main.profile", user_id=curUser.id))

@@ -77,6 +77,14 @@ class User(flask_login.UserMixin, db.Model):
     received_proposals: Mapped[List["DateProposal"]] = relationship(
         back_populates="recipient", foreign_keys="DateProposal.recipient_id"
     )
+    
+    sent_compliments: Mapped[List["Compliments"]] = relationship(
+        back_populates="sender", foreign_keys="Compliments.sender_id"
+    )
+    
+    received_compliments: Mapped[List["Compliments"]] = relationship(
+        back_populates="recipient", foreign_keys="Compliments.recipient_id"
+    )
 
 class Profile(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -114,3 +122,20 @@ class DateProposal(db.Model):
     status: Mapped[ProposalStatus] = mapped_column(String(16))
     proposingMessage: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     replyMessage: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    
+
+class Compliments(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    sender_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    recipient_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    message: Mapped[str] = mapped_column(Text)
+    created_time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=func.now())
+    
+    sender: Mapped["User"] = relationship(
+        foreign_keys=[sender_id], back_populates="sent_compliments"
+    )
+    
+    recipient: Mapped["User"] = relationship(
+        foreign_keys=[recipient_id], back_populates="received_compliments"
+    )
+

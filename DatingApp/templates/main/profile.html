@@ -106,6 +106,8 @@
     <div style="display: flex; justify-content: center">
         <button id="likersBtn" class="btn btn-primary me-2" style="background-color: #ff69b4; border: none">People who liked you</button>
         <button id="likedBtn" class="btn btn-outline-primary">People you liked</button>
+        <button id="complimentBtn" class="btn btn-primary ms-2" style="background-color: #ff69b4; border: none">Compliments</button>
+
     </div>
     <div id="blockedModal" class="blockedModal">
         <div class="modalContent">
@@ -191,7 +193,39 @@
             </div>
         </div>
     </div>
+    <div id="complimentModal" class="complimentModal">
+        <div class="modalContent">
+            <span class="close">&times;</span>
+            <div>
+                <h2>Compliments</h2>
+                <div class="compliments">
+                    {% for compliment in user.received_compliments %}
+                    <div id="compliment" style="display: flex; justify-content: space-between;">
+                        <div style="width: 75%">
+                            <div class="userRow">
+                                {% if compliment.sender.profile.photo %}
+                                    <img src="{{ url_for('static', filename='photos/photo-' ~ compliment.sender.profile.photo.id ~ '.' ~ compliment.sender.profile.photo.file_extension) }}" class="pfpSmall" alt="Profile photo" style="margin-right: 15px;">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='photos/defaultPfp.jpg') }}" class="pfpSmall" alt="Default profile photo" style="margin-right: 15px;">
+                                {% endif %}
+                                <div style="display: flex; flex-direction: column;">
+                                    <h5 style="margin: 0;"><a href="{{ url_for('main.profile', user_id=compliment.sender.id) }}">{{ compliment.sender.profile.fullname }}</a></h5>
+                                    <p style="margin: 0;">Age: {{ current_year - compliment.sender.profile.birth_year }}</p>
+                                </div>
+                            </div>
+                            <p>{{ compliment.message }}</p>
+                        </div>
+                        <div style="margin: 3% 1%">
+                            <button id="deleteCompliment" data-compliment-id="{{ compliment.id }}" class="btn btn-outline-danger">Delete</button>
+                        </div>
+                    </div>
 
+                        <hr style="border: 0.5px solid; color: grey; width: 100%;">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- All Proposal Stuff Section-->
     <div class = "proposal-wrapper">
 
@@ -372,10 +406,14 @@ document.getElementById('likersBtn').addEventListener('click', function() {
     openModal('likersModal');
 });
 
+document.getElementById('complimentBtn').addEventListener('click', function() {
+    openModal('complimentModal');
+});
+
 var closeButtons = document.querySelectorAll('.close');
 closeButtons.forEach(function(button) {
     button.addEventListener('click', function() {
-        var modal = button.closest('.blockedModal, .likedModal', '.likersModal');
+        var modal = button.closest('.blockedModal, .likedModal, .likersModal, .complimentModal');
         closeModal(modal);
     });
 });
@@ -384,6 +422,7 @@ window.addEventListener('click', function(event) {
     var blockedModal = document.getElementById('blockedModal');
     var likedModal = document.getElementById('likedModal');
     var likersModal = document.getElementById('likersModal');
+    var complimentModal = document.getElementById('complimentModal');
 
     if (event.target === blockedModal) {
         closeModal(blockedModal);
@@ -396,6 +435,42 @@ window.addEventListener('click', function(event) {
     if (event.target === likersModal) {
         closeModal(likersModal);
     }
+
+    if (event.target === complimentModal) {
+        closeModal(complimentModal);
+    }
 });
+
+document.querySelectorAll('#deleteCompliment').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const complimentId = e.target.getAttribute('data-compliment-id');
+        const response = await fetch("{{ url_for('main.deleteCompliment') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                c_id: complimentId,
+            })
+        });
+        if (response.ok) {
+            const compliment = e.target.closest('#compliment');
+            const hr = compliment.nextElementSibling;
+            
+            compliment.remove();
+
+            if (hr && hr.tagName === 'HR') {
+                console.log('hrehureuhrheu', hr);
+                hr.remove();
+            }
+        } else {
+            console.error("Failed to delete the compliment");
+            alert("An error occurred while deleting the compliment.");
+        }
+    });
+});
+
+
 </script>
 {% endblock %}
