@@ -41,7 +41,7 @@
     </div>
     <hr style="border: 1px solid ; color:#ff69b4; width: 75%">
     <div class="profileElements">
-            <div style="display: flex; flex-direction: column; text-align: center; width: 20%">
+            <div style="display: flex; flex-direction: column; text-align: center; width: 30%">
                 <h4 style="margin-bottom: 0; text-align: center">
                     {%if user.profile.gender== "male" %} Male
                     {%else%} Female
@@ -49,7 +49,7 @@
                 </h4>
                 <p>Gender</p>
             </div>
-        <div style="display: flex; flex-direction: column; text-align: center; width: 20%">
+        <div style="display: flex; flex-direction: column; text-align: center; width: 30%">
             <h4 style="margin-bottom: 0; text-align: center">
                 {%if user.profile.genderPreference== "male" %} Male
                     {%else%} Female
@@ -59,7 +59,7 @@
                 Gender Preference
             </p>
         </div>
-        <div style="display: flex; flex-direction: column; text-align: center; width: 20%">
+        <div style="display: flex; flex-direction: column; text-align: center; width: 30%">
             <h4 style="margin-bottom: 0; text-align: center">{{ current_year - user.profile.birth_year }}</h4>
             <p>
                 Age
@@ -198,6 +198,9 @@
             <span class="close">&times;</span>
             <div>
                 <h2>Compliments</h2>
+                {% if not user.received_compliments %}
+                    <p>No compliments received</p>
+                {% endif %}
                 <div class="compliments">
                     {% for compliment in user.received_compliments %}
                     <div id="compliment" style="display: flex; justify-content: space-between;">
@@ -457,7 +460,7 @@ document.querySelectorAll('#deleteCompliment').forEach(button => {
         if (response.ok) {
             const compliment = e.target.closest('#compliment');
             const hr = compliment.nextElementSibling;
-            
+
             compliment.remove();
 
             if (hr && hr.tagName === 'HR') {
