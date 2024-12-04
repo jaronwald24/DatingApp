@@ -15,6 +15,9 @@ The additional features include:
     - Styled effectively
     - Can view compliments on your profile page
     - Uses fetch API to delete compliments in the modal, so that it doesn't refresh everytime
+- Proposals:
+    - Added the ability for users to select a restaruant cuisine when making a proposal
+        - Ensured that each restaurant had the maximum amount of tables, rather than just 1 restaurant
 
 
 - AI was used very insignificantly, with nothing of large block code or worth sharing in here. It was mainly used to help debug, and so it would only affect syntaxical errors.
