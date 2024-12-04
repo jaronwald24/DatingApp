@@ -13,8 +13,8 @@ def create_app(test_config=None):
 
     # A secret for signing session cookies
     app.config["SECRET_KEY"] = "93220d9b340cf9a6c39bac99cce7daf220167498f91fa"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///DatingApp.db"
-    #app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://25_webapp_007:1Bgm4MON@mysql.lab.it.uc3m.es/25_webapp_007a"
+    #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///DatingApp.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://25_webapp_007:1Bgm4MON@mysql.lab.it.uc3m.es/25_webapp_007a"
 
 
     login_manager = LoginManager()
