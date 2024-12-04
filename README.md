@@ -21,5 +21,6 @@ The additional features include:
     - Went above and beyond on styling and presentation of proposals, ensuring each type of proposal is properly put into its own section
     - Overflow of many proposals handled
 
+For optimal viewing of users, we have many filler users and 5 custom users with more fulfilled profiles, with every combination of age preference. When testing I used a profile of age about 20 with preferences 18-30.
 
 - AI was used very insignificantly, with nothing of large block code or worth sharing in here. It was mainly used to help debug, and so it would only affect syntaxical errors.
