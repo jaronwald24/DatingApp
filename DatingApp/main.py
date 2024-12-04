@@ -5,6 +5,7 @@ import dateutil.tz
 from flask import Blueprint, render_template, request, abort,redirect, url_for, flash, current_app, Flask
 import flask_login
 import pathlib
+from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
 
 from . import db
@@ -28,14 +29,17 @@ def index():
     
     blocked_users = [blocked_user.id for blocked_user in curUser.blocking]     
 
-
+    curAge = current_year - curUser.profile.birth_year
+    
     defaultUsers = db.session.query(model.User).join(model.Profile).filter(
         model.User.id != curUser.id,
         model.Profile.birth_year.between(age_min, age_max),
         model.User.id.notin_(blocked_users),
         model.Profile.gender == gender_pref,
-        model.Profile.genderPreference == curUser.profile.gender
-    ).limit(10).all()
+        model.Profile.genderPreference == curUser.profile.gender,
+        (model.Profile.age_maximum >= curAge) &  
+        (model.Profile.age_minimum <= curAge)    
+        ).limit(10).all()
 
 
     compliments = ["So Beautiful", "So Handsome", "Cute", "Looking Good", "Wow", "So Pretty", "Stunning"]
@@ -94,10 +98,15 @@ def profile(user_id):
     ) if curUser.id == user.id else []
 
     current_year = datetime.now().year
+    
+    compliments = model.Compliments.query.filter_by(recipient_id=user.id).all()
+
+    complimentsFiltered = [compliment for compliment in compliments if compliment.sender not in user.blocking]
 
     return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button, block_button=block_button,
                            current_year=current_year, received_proposals=received_proposals,
-                           sent_proposals=sent_proposals, set_dates=set_dates, reschedule_or_rejected_requested=reschedule_or_rejected_requested)
+                           sent_proposals=sent_proposals, set_dates=set_dates, reschedule_or_rejected_requested=reschedule_or_rejected_requested,
+                           compliments=complimentsFiltered)
 
 @bp.route("/like/<int:user_id>", methods=["POST"])
 @flask_login.login_required
@@ -152,7 +161,7 @@ def editProfilePost():
 
     dbUser.profile.bio = request.form.get("bio")
     print('bio', request.form.get("bio"))
-    dbUser.profile.instagram_username = request.form.get("ig") or dbUser.instagram_username
+    dbUser.profile.instagram_username = request.form.get("ig") or dbUser.profile.instagram_username
     dbUser.profile.birth_year = request.form.get("birth_year") or dbUser.profile.birth_year
     dbUser.profile.gender = request.form.get("gender") or dbUser.profile.gender
     dbUser.profile.genderPreference = request.form.get("genderPreference") or dbUser.profile.genderPreference
@@ -265,16 +274,21 @@ def search():
 
     age_min = current_year - curUser.profile.age_maximum
     age_max = current_year - curUser.profile.age_minimum
+    
+    
+    
     gender_pref = curUser.profile.genderPreference
     blocked_users = [blocked_user.id for blocked_user in curUser.blocking]
-
-
+    curAge = current_year - curUser.profile.birth_year
+    
     defaultUsers = db.session.query(model.User).join(model.Profile).filter(
         model.User.id != curUser.id,
         model.User.id.notin_(blocked_users),
         model.Profile.birth_year.between(age_min, age_max),
         model.Profile.gender == gender_pref,
-        model.Profile.genderPreference == curUser.profile.gender
+        model.Profile.genderPreference == curUser.profile.gender,
+        (model.Profile.age_maximum >= curAge) &  
+        (model.Profile.age_minimum <= curAge) 
     ).limit(10).all()
         
     compliments = ["So Beautiful", "So Handsome", "Cute", "Looking Good", "Wow", "So Pretty", "Stunning"]

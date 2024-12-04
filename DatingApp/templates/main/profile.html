@@ -198,11 +198,11 @@
             <span class="close">&times;</span>
             <div>
                 <h2>Compliments</h2>
-                {% if not user.received_compliments %}
+                {% if not compliments %}
                     <p>No compliments received</p>
                 {% endif %}
                 <div class="compliments">
-                    {% for compliment in user.received_compliments %}
+                    {% for compliment in compliments %}
                     <div id="compliment" style="display: flex; justify-content: space-between;">
                         <div style="width: 75%">
                             <div class="userRow">
@@ -238,7 +238,7 @@
             {% for date in set_dates %}
                 <div class="proposal">
                     {% if date.proposer.id == current_user.id %}
-                        <p>Set a date with {{ date.recipient.username }} for {{ date.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>Set a date with <a href="{{ url_for('main.profile', user_id=date.recipient.id) }}">{{ date.recipient.username }}</a> for {{ date.proposed_day.strftime('%Y-%m-%d') }}</p>
                         {% if date.replyMessage %}
                             <p>They replied: {{ date.replyMessage }}</p>
                         {% endif %}
@@ -254,7 +254,7 @@
                             </p>
                         {% endif %}
                     {% else %}
-                        <p>{{ date.proposer.username }} set a date with you for {{ date.proposed_day.strftime('%Y-%m-%d')}}</p>
+                        <p> <a href="{{ url_for('main.profile', user_id=date.proposer.id) }}">{{ date.proposer.username }}</a> set a date with you for {{ date.proposed_day.strftime('%Y-%m-%d')}}</p>
                         {%if date.replyMessage %}
                         <p>Your reply: {{date.replyMessage}}</p>
                         {% endif %}
@@ -280,7 +280,7 @@
             {% for proposal in received_proposals %}
                 {%if proposal.status == '0'%}
                 <div class="proposal">
-                    <p>{{ proposal.proposer.username }} proposed a date for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                    <p><a href="{{ url_for('main.profile', user_id=proposal.proposer.id) }}">{{ proposal.proposer.username }}</a> proposed a date for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
                     {% if proposal.proposingMessage %}
                         <p>Message: {{proposal.proposingMessage}}</p>
                     {% endif %}
@@ -320,7 +320,7 @@
             {% for proposal in sent_proposals %}
                 {% if proposal.status == '0' or proposal.status == '3'%}
                     <div class="proposal">
-                        <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>Proposed to <a href="{{ url_for('main.profile', user_id=proposal.recipient.id) }}">{{ proposal.recipient.username }}</a> for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
                         {%if proposal.proposingMessage %}
                             <p>Message: {{proposal.proposingMessage}}</p>
                         {% endif %}
@@ -347,7 +347,7 @@
             {% for proposal in received_proposals %}
                 {% if proposal.status != '0' and proposal.status != '3' and proposal.status != '1'%}
                     <div class="proposal">
-                        <p>Proposed by {{ proposal.proposer.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>Proposed by <a href="{{ url_for('main.profile', user_id=proposal.proposer.id) }}">{{ proposal.proposer.username }}</a> for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
                         {%if proposal.proposingMessage %}
                             <p>Message: {{proposal.proposingMessage}}</p>
                         {% endif %}
@@ -378,7 +378,7 @@
             {% for proposal in reschedule_or_rejected_requested %}
                 <div class="proposal">
                     <p>
-                        Reply from {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}
+                        Reply from <a href="{{ url_for('main.profile', user_id=proposal.recipient.id) }}">{{ proposal.recipient.username }}</a> for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}
                     </p>
                     {% if proposal.proposingMessage %}
                         <p>Message: {{ proposal.proposingMessage }}</p>

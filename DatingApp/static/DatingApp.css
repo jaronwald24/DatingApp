@@ -90,7 +90,7 @@ body {
     padding: 1% 3%;
     text-align: center;
     align-items: left;
-    width: 35%;
+    width: 60%;
 }
 
 .createProfileElement {
@@ -504,4 +504,9 @@ body {
 .compliment:nth-child(odd) {
     background-color: #000; 
     color: #ff69b4;
+  }
+
+  .required:after {
+    content:" *";
+    color: red;
   }

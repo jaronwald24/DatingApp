@@ -11,23 +11,23 @@
         <form action="{{ url_for('auth.signup') }}" method="post" enctype="multipart/form-data">
             <h2>Sign Up</h2>      
             <div class="createProfileElement">
-                <label for="email">Email:</label>
+                <label class="required" for="email">Email:</label>
                 <input type="email" name="email" required/>
             </div>
             <div class="createProfileElement">
-                <label for="username">Username:</label>
+                <label class="required" for="username">Username:</label>
                 <input type="text" name="username" required/>
             </div>
             <div class="createProfileElement">
-                <label for="password">Password:</label>
+                <label class="required" for="password">Password:</label>
                 <input type="password" name="password" required/>
             </div>
             <div class="createProfileElement">
-                <label for="password_repeat">Repeat Password:</label>
+                <label class="required" for="password_repeat">Repeat Password:</label>
                 <input type="password" name="password_repeat" required/>
             </div>            
             <div class="createProfileElement">
-                <label for="name">Full Name:</label>
+                <label class="required" for="name">Full Name:</label>
                 <input type="text" id="name" name="name" required>
             </div>
             <div class="createProfileElement">
@@ -39,26 +39,26 @@
                 <textarea placeholder="john_snow" name="ig"></textarea>
             </div>
             <div class="createProfileElement">
-                <label for="birth_year">Birth Year:</label>
+                <label class="required" for="birth_year">Birth Year:</label>
                 <input type="number" id="birth_year" name="birth_year" min="1924" max="2024" required>
             </div>
             <div class="createProfileElement">
-                <label for="age_minimum">Age Minimum:</label>
+                <label class="required" for="age_minimum">Age Minimum:</label>
                 <input type="number" id="age_minimum" name="age_minimum" min="18" max="100" required>
             </div>
             <div class="createProfileElement">
-                <label for="age_maximum">Age Maximum:</label>
+                <label class="required" for="age_maximum">Age Maximum:</label>
                 <input type="number" id="age_maximum" name="age_maximum" min="18" max="100" required>
             </div>
             <div class="createProfileElement">
-                <label for="gender">Gender:</label>
+                <label class="required" for="gender">Gender:</label>
                 <select id="gender" name="gender" required>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                 </select>
             </div>
             <div class="createProfileElement">
-                <label for="genderPreference">Gender Preference:</label>
+                <label class="required" for="genderPreference">Gender Preference:</label>
                 <select id="genderPreference" name="genderPreference" required>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
