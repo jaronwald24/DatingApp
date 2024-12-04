@@ -69,7 +69,6 @@ def profile(user_id):
     received_proposals = (
         DateProposal.query.filter(
             DateProposal.recipient_id == user.id,
-            DateProposal.created_time >= datetime.now() - timedelta(days=10)
         ).all()
         if curUser.id == user.id else []
     )
@@ -78,16 +77,27 @@ def profile(user_id):
     set_dates = DateProposal.query.filter(
         db.or_(
             DateProposal.recipient_id == user.id,
-            DateProposal.proposer_id == user.id
+            DateProposal.proposer_id == user.id,
+            DateProposal.proposed_day >= datetime.now()
         ),
         DateProposal.status == model.ProposalStatus.accepted.value
     ).all()
+
+    reschedule_or_rejected_requested = (
+        DateProposal.query.filter(
+            DateProposal.proposer_id == user.id,
+            db.or_(
+                DateProposal.status == model.ProposalStatus.reschedule.value,
+                DateProposal.status == model.ProposalStatus.rejected.value
+            )
+        ).all()
+    ) if curUser.id == user.id else []
 
     current_year = datetime.now().year
 
     return render_template("main/profile.html", user=user, curUser=curUser, like_button=like_button, block_button=block_button,
                            current_year=current_year, received_proposals=received_proposals,
-                           sent_proposals=sent_proposals, set_dates=set_dates)
+                           sent_proposals=sent_proposals, set_dates=set_dates, reschedule_or_rejected_requested=reschedule_or_rejected_requested)
 
 @bp.route("/like/<int:user_id>", methods=["POST"])
 @flask_login.login_required
@@ -334,24 +344,25 @@ def propose_date(recipient_id):
                 flash("Please select a future date.")
                 return redirect(url_for("main.profile", user_id=recipient_id))
             
+            prop_restaurant = request.form.get("restaurant")     
 
             proposals_on_day = DateProposal.query.filter_by(
-                proposed_day=proposed_day, status=model.ProposalStatus.proposed.value
+                proposed_day=proposed_day, restaurant_type = prop_restaurant, status=model.ProposalStatus.proposed.value
             ).count()
 
             dates_on_day = DateProposal.query.filter_by(
-                proposed_day=proposed_day, status=model.ProposalStatus.accepted.value
+                proposed_day=proposed_day, restaurant_type = prop_restaurant, status=model.ProposalStatus.accepted.value
             ).count()
 
             max_tables = 10  # Assuming 10 tables per night
 
             if proposals_on_day + dates_on_day >= max_tables:
-                flash("No available tables for the selected night.")
+                flash("No available tables for the selected night and restaurant.")
                 return redirect(url_for("main.profile", user_id=recipient_id))
 
             # Create the date proposal
             optional_message = request.form.get("optional_message")
-            restaurant = request.form.get("restaurant")
+            
             if curUser in recipient.blocking:
                 setStatus = model.ProposalStatus.ignored.value
             else:
@@ -361,7 +372,7 @@ def propose_date(recipient_id):
                 recipient_id=recipient.id,
                 created_time=datetime.now(),
                 proposed_day=proposed_day,
-                restaurant_type=restaurant,
+                restaurant_type=prop_restaurant,
                 status=setStatus,  
                 proposingMessage=optional_message
             )

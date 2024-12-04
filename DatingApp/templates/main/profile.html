@@ -347,7 +347,7 @@
             {% for proposal in received_proposals %}
                 {% if proposal.status != '0' and proposal.status != '3' and proposal.status != '1'%}
                     <div class="proposal">
-                        <p>Proposed to {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
+                        <p>Proposed by {{ proposal.proposer.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}</p>
                         {%if proposal.proposingMessage %}
                             <p>Message: {{proposal.proposingMessage}}</p>
                         {% endif %}
@@ -374,6 +374,37 @@
                         </p>
                     </div>
                 {% endif %}
+            {% endfor %}
+            {% for proposal in reschedule_or_rejected_requested %}
+                <div class="proposal">
+                    <p>
+                        Reply from {{ proposal.recipient.username }} for {{ proposal.proposed_day.strftime('%Y-%m-%d') }}
+                    </p>
+                    {% if proposal.proposingMessage %}
+                        <p>Message: {{ proposal.proposingMessage }}</p>
+                    {% endif %}
+                    {% if proposal.replyMessage %}
+                        <p>Reply: {{ proposal.replyMessage }}</p>
+                    {% endif %}
+                    {% if proposal.restaurant_type %}
+                        <p>Restaurant: 
+                            {% if proposal.restaurant_type == '0' %} Mexican
+                            {% elif proposal.restaurant_type == '1' %} Italian
+                            {% elif proposal.restaurant_type == '2' %} Chinese
+                            {% elif proposal.restaurant_type == '3' %} Japanese
+                            {% elif proposal.restaurant_type == '4' %} Indian
+                            {% elif proposal.restaurant_type == '5' %} Thai
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                    <p>Status: 
+                        {% if proposal.status == '2' %}
+                            Rejected
+                        {% elif proposal.status == '4' %}
+                            Reschedule Requested
+                        {% endif %}
+                    </p>
+                </div>
             {% endfor %}
         </div>
     </div>

@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
-            <div class="notification">{{ message }}</div>
-        {% endfor %}
-    {% endwith %}
     <div class="loginContainer">
         <div style="width: 100%">
             <h2 style="margin-bottom: 0; margin-left: 1%">Welcome</h2>
