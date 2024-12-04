@@ -443,6 +443,8 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     align-items: center;
     margin-top: 5%;
+    max-height: 50vh;
+    overflow-y: scroll;
 }
 
 .proposal-section .proposal p {
